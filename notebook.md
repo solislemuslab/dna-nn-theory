@@ -16,3 +16,6 @@
     - kmer table (k=3), word2vec
     - Convolutional NN (window size=2)
     - trains in minutes and has high accuracy (train 97%, test 80%)
+
+- charRNN
+- embedding
