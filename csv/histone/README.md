@@ -1,0 +1,4 @@
+- v1: two Conv2D
+- v2: two Conv2D with l2 regularization
+- v3: one Conv1D, two Conv2D
+- v4: one Conv1D, two Conv2D with l2 regularization
