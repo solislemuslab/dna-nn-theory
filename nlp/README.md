@@ -39,9 +39,9 @@ all these 3: not included in overleaf
 # /nlp/viridae
 - baseline_viridae_adam256_history.csv: baseline viridae adam256 training.png
 - baseline_viridae_sgd256_history.csv: baseline viridae sgd256 training.png
-- baseline_viridae(front)_sgd256_history.csv: baseline viridae_front adam256 training.png
-- baseline_viridae(mdl)_sgd256_history.csv: baseline viridae_mdl adam256 training.png
-- baseline_viridae(rear)_sgd256_history.csv: baseline viridae_rear adam256 training.png
+- baseline_viridae(front)\_sgd256_history.csv: baseline_viridae(front)\_sgd256_training.png
+- baseline_viridae(mdl)\_sgd256_history.csv: baseline_viridae(mdl)\_sgd256_training.png
+- baseline_viridae(rear)\_sgd256_history.csv: baseline_viridae(rear)\_sgd256_training.png
 
 - ae_viridae_prediction_history.csv: ae_viridae_prediction.png
 - ae_viridae_reconstruction_history.csv: not included in overleaf
