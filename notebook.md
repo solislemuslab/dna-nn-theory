@@ -7,15 +7,8 @@
 
 # Method alternatives
 
-- Zeng2016
-    - 4xL matrix (L=101) converted to one-hot encoding
-    - Convolutional NN (window size=24)
-    - Slow to train, only 50% accuracy with 1 epoch
+More details on the [google doc](https://docs.google.com/document/d/15CwWi_ee-Ku3JRwLGdRN8k2lYidbUqDE6xVDgmTRIJA/edit)
 
-- Nguyen2016
-    - kmer table (k=3), word2vec
-    - Convolutional NN (window size=2)
-    - trains in minutes and has high accuracy (train 97%, test 80%)
+# Plots for manuscript
 
-- charRNN
-- embedding
+See `plots/final-plots.Rmd`.

@@ -1,0 +1,525 @@
+# Final plots in the manuscript
+
+Necessary package:
+```{r}
+library(ggplot2)
+```
+
+## Figure in `fig:histone-history-1`
+
+Reading the data:
+```{r}
+v1 = read.table("../cnn/csv/histone/v1.csv", header=TRUE, sep=",")
+str(v1)
+
+## add regularization type:
+v1$method = "no-regularization"
+
+v2 = read.table("../cnn/csv/histone/v2.csv", header=TRUE, sep=",")
+str(v2)
+
+## add regularization type:
+v2$method = "L2-regularization"
+
+## Append both datasets:
+dat = rbind(v1,v2)
+str(dat)
+dat = within(dat, method<-factor(method,levels=c("no-regularization", "L2-regularization")))
+```
+
+Creating the plots:
+```{r}
+p1 = ggplot(dat, aes(x=epoch, y=accuracy))+geom_line(col="blue4", size=1.5)+
+  geom_line(aes(y=val_accuracy),col="darkgreen", size=1.5)+
+  ylim(c(0.6,0.8))+
+  facet_wrap(~method)+
+     theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none",
+    strip.text = element_text(size = 17)
+  )
+p1
+
+pdf("two-conv2d-acc.pdf",height=4, width=8)
+p1
+dev.off()
+```
+
+```{r}
+p2 = ggplot(dat, aes(x=epoch, y=loss))+geom_line(col="blue4", size=1.5)+
+  geom_line(aes(y=val_loss),col="darkgreen", size=1.5)+
+  ylim(c(0.45,0.85))+
+  facet_wrap(~method)+
+#  ggtitle("Loss")+
+     theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none",
+    strip.text = element_text(size = 17)
+  )
+p2
+
+pdf("two-conv2d-loss.pdf",height=4, width=8)
+p2
+dev.off()
+```
+
+## Figure in `fig:histone-history-2`
+
+Reading the data:
+```{r}
+v3 = read.table("../cnn/csv/histone/v3.csv", header=TRUE, sep=",")
+str(v3)
+
+## add regularization type:
+v3$method = "no-regularization"
+
+v4 = read.table("../cnn/csv/histone/v4.csv", header=TRUE, sep=",")
+str(v4)
+
+## add regularization type:
+v4$method = "L2-regularization"
+
+## Append both datasets:
+dat = rbind(v3,v4)
+str(dat)
+dat = within(dat, method<-factor(method,levels=c("no-regularization", "L2-regularization")))
+```
+
+Creating the plots:
+```{r}
+p3 = ggplot(dat, aes(x=epoch, y=accuracy))+geom_line(col="blue4", size=1.5)+
+  geom_line(aes(y=val_accuracy),col="darkgreen", size=1.5)+
+  ylim(c(0.6,0.99))+
+  facet_wrap(~method)+
+     theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none",
+    strip.text = element_text(size = 17)
+  )
+p3
+
+pdf("one-conv1d-two-conv2d-acc.pdf",height=4, width=8)
+p3
+dev.off()
+```
+
+```{r}
+p4 = ggplot(dat, aes(x=epoch, y=loss))+geom_line(col="blue4", size=1.5)+
+  geom_line(aes(y=val_loss),col="darkgreen", size=1.5)+
+  ylim(c(0.05,1.45))+
+  facet_wrap(~method)+
+#  ggtitle("Loss")+
+     theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none",
+    strip.text = element_text(size = 17)
+  )
+p4
+
+pdf("one-conv1d-two-conv2d-loss.pdf",height=4, width=8)
+p4
+dev.off()
+```
+
+## Figure in `fig:motif-discovery-history`
+
+Reading the data:
+```{r}
+v1 = read.table("../cnn/csv/motif-discovery/v1.csv", header=TRUE, sep=",")
+str(v1)
+
+## add regularization type:
+v1$method = "2 2D conv layers"
+
+v2 = read.table("../cnn/csv/motif-discovery/v2.csv", header=TRUE, sep=",")
+str(v2)
+
+## add regularization type:
+v2$method = "3 2D conv layers"
+
+v3 = read.table("../cnn/csv/motif-discovery/v3.csv", header=TRUE, sep=",")
+str(v3)
+
+## add regularization type:
+v3$method = "4 2D conv layers"
+
+
+## Append both datasets:
+dat = rbind(v1,v2,v3)
+str(dat)
+dat = within(dat, method<-factor(method))
+```
+
+Creating the plots:
+```{r}
+p5 = ggplot(dat, aes(x=epoch, y=accuracy))+geom_line(col="blue4", size=1.5)+
+  geom_line(aes(y=val_accuracy),col="darkgreen", size=1.5)+
+  ylim(c(0.5,0.8))+
+  facet_wrap(~method)+
+  xlab("")+
+     theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none",
+    strip.text = element_text(size = 17)
+  )
+p5
+
+pdf("two-to-four-layers-acc.pdf",height=4, width=12)
+p5
+dev.off()
+```
+
+```{r}
+p6 = ggplot(dat, aes(x=epoch, y=loss))+geom_line(col="blue4", size=1.5)+
+  geom_line(aes(y=val_loss),col="darkgreen", size=1.5)+
+  ylim(c(0.35,2.15))+
+  facet_wrap(~method)+
+     theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none",
+    strip.text = element_blank()
+  )
+p6
+
+pdf("two-to-four-layers-loss.pdf",height=4, width=12)
+p6
+dev.off()
+```
+
+## Figure in `fig:motif-discovery-reg-history`
+
+Reading the data:
+```{r}
+v3 = read.table("../cnn/csv/motif-discovery/v3.csv", header=TRUE, sep=",")
+str(v3)
+
+## add regularization type:
+v3$method = "no-regularization"
+
+v4 = read.table("../cnn/csv/motif-discovery/v4.csv", header=TRUE, sep=",")
+str(v4)
+
+## add regularization type:
+v4$method = "L2-regularization"
+
+## Append both datasets:
+dat = rbind(v3,v4)
+str(dat)
+dat = within(dat, method<-factor(method,levels=c("no-regularization", "L2-regularization")))
+```
+
+Creating the plots:
+```{r}
+p7 = ggplot(dat, aes(x=epoch, y=accuracy))+geom_line(col="blue4", size=1.5)+
+  geom_line(aes(y=val_accuracy),col="darkgreen", size=1.5)+
+  ylim(c(0.45,0.8))+
+  facet_wrap(~method)+
+     theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none",
+    strip.text = element_text(size = 17)
+  )
+p7
+
+pdf("four-layer-reg-acc.pdf",height=4, width=8)
+p7
+dev.off()
+```
+
+```{r}
+p8 = ggplot(dat, aes(x=epoch, y=loss))+geom_line(col="blue4", size=1.5)+
+  geom_line(aes(y=val_loss),col="darkgreen", size=1.5)+
+  ylim(c(0.35,2.15))+
+  facet_wrap(~method)+
+#  ggtitle("Loss")+
+     theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none",
+    strip.text = element_text(size = 17)
+  )
+p8
+
+pdf("four-layer-reg-loss.pdf",height=4, width=8)
+p8
+dev.off()
+```
+
+## Figure in `fig:deepram-history`
+
+Reading data:
+```{r}
+emb.cnn = read.table("../cnn/csv/deepram/embedding/conv1d/v1.csv", header=TRUE, sep=",")
+emb.cnn$model = "CNN"
+emb.cnn$encoding = "embedding"
+
+emb.cnnrnn = read.table("../cnn/csv/deepram/embedding/conv1d-recurrent/v1.csv", header=TRUE, sep=",")
+emb.cnnrnn$model = "CNN-RNN"
+emb.cnnrnn$encoding = "embedding"
+
+emb.rnn = read.table("../cnn/csv/deepram/embedding/recurrent/v1.csv", header=TRUE, sep=",")
+emb.rnn$model = "RNN"
+emb.rnn$encoding = "embedding"
+
+one.cnn = read.table("../cnn/csv/deepram/onehot/conv1d/v1.csv", header=TRUE, sep=",")
+one.cnn$model = "CNN"
+one.cnn$encoding = "one-hot"
+
+one.cnnrnn = read.table("../cnn/csv/deepram/onehot/conv1d-recurrent/v1.csv", header=TRUE, sep=",")
+one.cnnrnn$model = "CNN-RNN"
+one.cnnrnn$encoding = "one-hot"
+
+one.rnn = read.table("../cnn/csv/deepram/onehot/recurrent/v1.csv", header=TRUE, sep=",")
+one.rnn$model = "RNN"
+one.rnn$encoding = "one-hot"
+
+## Appending data:
+dat = rbind(emb.cnn, emb.cnnrnn, emb.rnn, one.cnn, one.cnnrnn, one.rnn)
+str(dat)
+dat = within(dat, model<-factor(model))
+dat = within(dat, encoding <- factor(encoding))
+```
+
+Creating plots:
+```{r}
+p9 = ggplot(dat, aes(x=epoch, y=accuracy))+geom_line(col="blue4", size=1.5)+
+  geom_line(aes(y=val_accuracy),col="darkgreen", size=1.5)+
+  ylim(c(0.45,0.8))+
+  facet_grid(encoding~model)+
+     theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none",
+    strip.text = element_text(size = 17)
+  )
+p9
+
+pdf("cnn-rnn-acc.pdf",height=8, width=12)
+p9
+dev.off()
+```
+
+```{r}
+p10 = ggplot(dat, aes(x=epoch, y=loss))+geom_line(col="blue4", size=1.5)+
+  geom_line(aes(y=val_loss),col="darkgreen", size=1.5)+
+  ylim(c(0.4,0.7))+
+  facet_grid(encoding~model)+
+     theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none",
+    strip.text = element_text(size = 17)
+  )
+p10
+
+pdf("cnn-rnn-loss.pdf",height=8, width=12)
+p10
+dev.off()
+```
+
+## Figure in `fig:cifar-10-comparison`
+
+Reading in data:
+```{r}
+cifar = read.table("../cnn/csv/cifar-10/log.csv", header=TRUE, sep=",")
+cifar$data = "CIFAR-10"
+cifar$epoch = 0:39
+str(cifar)
+## keeping only the first 30 epochs
+cifar2 = cifar[1:30,]
+str(cifar2)
+
+motif = read.table("../cnn/csv/motif-discovery/v3.csv", header=TRUE, sep=",")
+motif$data = "motif-discovery"
+str(motif)
+
+## Append data:
+dat = rbind(cifar2, motif)
+dat = within(dat, data<-factor(data))
+str(dat)
+```
+
+Creating the plots:
+```{r}
+p11 = ggplot(dat, aes(x=epoch, y=accuracy))+geom_line(col="blue4", size=1.5)+
+  geom_line(aes(y=val_accuracy),col="darkgreen", size=1.5)+
+  ylim(c(0.4,0.85))+
+  facet_wrap(~data)+
+     theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none",
+    strip.text = element_text(size = 17)
+  )
+p11
+
+pdf("cifar-10-comparison-acc.pdf",height=4, width=8)
+p11
+dev.off()
+```
+
+```{r}
+p12 = ggplot(dat, aes(x=epoch, y=loss))+geom_line(col="blue4", size=1.5)+
+  geom_line(aes(y=val_loss),col="darkgreen", size=1.5)+
+  ylim(c(0.35,2.15))+
+  facet_wrap(~data)+
+     theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none",
+    strip.text = element_text(size = 17)
+  )
+p12
+
+pdf("cifar-10-comparison-loss.pdf",height=4, width=8)
+p12
+dev.off()
+```
+
+## Figure in `fig:optimizer`
+
+Reading the data:
+```{r}
+adam = read.table("../nlp/UCI/baseline_uci_adam256_history.csv", header=TRUE, sep=",")
+str(adam)
+adam$epoch = adam$X
+adam$optimizer = "Adam"
+
+sgd = read.table("../nlp/UCI/baseline_uci_sgd256_history.csv", header=TRUE, sep=",")
+str(sgd)
+sgd$epoch = sgd$X
+sgd$optimizer = "SGD"
+
+## Appending the data:
+dat = rbind(adam,sgd)
+str(dat)
+dat = within(dat, optimizer<-factor(optimizer))
+```
+
+Creating the plots:
+```{r}
+p13 = ggplot(dat, aes(x=epoch, y=accuracy))+geom_line(col="blue4", size=1.5)+
+  geom_line(aes(y=val_accuracy),col="darkgreen", size=1.5)+
+  ylim(c(0.5,0.99))+
+  facet_wrap(~optimizer, scales="free_x")+
+     theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none",
+    strip.text = element_text(size = 17)
+  )
+p13
+
+pdf("baseline-uci-acc.pdf",height=4, width=8)
+p13
+dev.off()
+```
+
+```{r}
+p14 = ggplot(dat, aes(x=epoch, y=loss))+geom_line(col="blue4", size=1.5)+
+  geom_line(aes(y=val_loss),col="darkgreen", size=1.5)+
+  ylim(c(0.1,1.2))+
+  facet_wrap(~optimizer, scales="free_x")+
+     theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none",
+    strip.text = element_text(size = 17)
+  )
+p14
+
+pdf("baseline-uci-loss.pdf",height=4, width=8)
+p14
+dev.off()
+```
