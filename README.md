@@ -16,13 +16,27 @@ Zhaoyi Zhang, Songyang Cheng, Claudia Solis-Lemus
 [description scripts/files corresponding to analyses in the paper here]
 
 ### LSTM-layer
-[description scripts/files corresponding to analyses in the paper here]
+- supervised_chip(256_adam)_save_embeddings.ipynb
+- supervised_chip(256_sgd)_save_embedding.ipynb
+- supervised_UCI_adam256_save_embedding.ipynb
+- supervised_UCI_sgd256_save_embedding.ipynb
+- supervised_viridae_adam256_save_embedding.ipynb
+- supervised_viridae_save_embedding.ipynb
+- supervised_viridae(front)_sgd256_save_embedding.ipynb
+- supervised_viridae(mdl)_sgd256_save_embedding.ipynb
+- supervised_viridae(rear)_sgd256_save_embedding.ipynb
 
 ### doc2vec+NN
-[description scripts/files corresponding to analyses in the paper here]
+- doc2vec_chip_save_embedding.ipynb
+- doc2vec_UCI_save_embedding.ipynb
+- doc2vec_viridae_save_embedding.ipynb
 
 ### LSTM-AE+NN
-[description scripts/files corresponding to analyses in the paper here]
+- ae(1_layer)_chip_adam32_save_embedding.ipynb
+- ae(1_layer)_chip_adam256_save_embedding.ipynb
+- ae(1_layer)_chip_adam1024_save_embedding.ipynb
+- ae(1_layer)_UCI_save_embedding.ipynb
+- ae(1_layer)_viridae_save_embedding.ipynb
 
 
 ## Figures in the manuscript
