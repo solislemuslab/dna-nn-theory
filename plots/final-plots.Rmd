@@ -524,6 +524,73 @@ p14
 dev.off()
 ```
 
+Reading the data:
+```{r}
+adam = read.table("../nlp/CHIP/baseline_chip_adam256_history.csv", header=TRUE, sep=",")
+str(adam)
+adam$epoch = adam$X
+adam$optimizer = "Adam"
+
+sgd = read.table("../nlp/CHIP/baseline_chip_sgd256_history.csv", header=TRUE, sep=",")
+str(sgd)
+sgd$epoch = sgd$X
+sgd$optimizer = "SGD"
+
+## Appending the data:
+dat = rbind(adam,sgd)
+str(dat)
+dat = within(dat, optimizer<-factor(optimizer))
+```
+
+Creating the plots:
+```{r}
+p13_2 = ggplot(dat, aes(x=epoch, y=accuracy))+geom_line(col="blue4", size=1.5)+
+  geom_line(aes(y=val_accuracy),col="darkgreen", size=1.5)+
+  ylim(c(0.5,0.99))+
+  facet_wrap(~optimizer, scales="free_x")+
+     theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none",
+    strip.text = element_text(size = 17)
+  )
+p13_2
+
+pdf("baseline-chip-acc.pdf",height=4, width=8)
+p13_2
+dev.off()
+```
+
+```{r}
+p14_2 = ggplot(dat, aes(x=epoch, y=loss))+geom_line(col="blue4", size=1.5)+
+  geom_line(aes(y=val_loss),col="darkgreen", size=1.5)+
+  ylim(c(0.1,1.2))+
+  facet_wrap(~optimizer, scales="free_x")+
+     theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none",
+    strip.text = element_text(size = 17)
+  )
+p14_2
+
+pdf("baseline-chip-loss.pdf",height=4, width=8)
+p14_2
+dev.off()
+```
+
 ## Figure in `fig:splice-promoter-conv2d-history`
 
 Reading the data:
@@ -663,3 +730,363 @@ pdf("one-conv1d-loss.pdf",height=4, width=8)
 p18
 dev.off()
 ```
+
+## Figure in `fig:batch_size`
+Reading the data:
+```{r}
+batch32 = read.table("../nlp/CHIP/ae_chip_adam32_reconstruction_history.csv", header=TRUE, sep=",")
+str(batch32)
+batch32$epoch = batch32$X
+batch32$batch_size = 32
+# adam$optimizer = "Adam"
+
+batch256 = read.table("../nlp/CHIP/ae_chip_adam256_reconstruction_history.csv", header=TRUE, sep=",")
+str(batch256)
+batch256$epoch = batch256$X
+batch256$batch_size = 256
+# sgd$optimizer = "SGD"
+
+batch1024 = read.table("../nlp/CHIP/ae_chip_adam1024_reconstruction_history.csv", header=TRUE, sep=",")
+str(batch1024)
+batch1024$epoch = batch1024$X
+batch1024$batch_size = 1024
+
+## Appending the data:
+dat = rbind(batch32,batch256,batch1024)
+str(dat)
+dat = within(dat, batch_size<-factor(batch_size))
+```
+Creating the plots:
+```{r}
+p19 = ggplot(dat, aes(x=epoch, y=accuracy))+geom_line(col="blue4", size=1.5)+
+  geom_line(aes(y=val_accuracy),col="darkgreen", size=1.5)+
+  ylim(c(0.3,0.6))+
+  facet_wrap(~batch_size, scales="free_x")+
+     theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none",
+    strip.text = element_text(size = 17)
+  )
+p19
+
+pdf("batchsize-chip-reconstruction-acc.pdf",height=4, width=12)
+p19
+dev.off()
+```
+```{r}
+p20 = ggplot(dat, aes(x=epoch, y=loss))+geom_line(col="blue4", size=1.5)+
+  geom_line(aes(y=val_loss),col="darkgreen", size=1.5)+
+  ylim(c(1.0,1.4))+
+  facet_wrap(~batch_size, scales="free_x")+
+     theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none",
+    strip.text = element_text(size = 17)
+  )
+p20
+
+pdf("batchsize-chip-reconstruction-loss.pdf",height=4, width=12)
+p20
+dev.off()
+```
+
+## Figure in `fig:doc2vec`
+Reading the data:
+```{r}
+embedding_50 = read.table("../nlp/viridae/doc2vec_viridae_size50_history.csv", header=TRUE, sep=",")
+str(embedding_50)
+embedding_50$epoch = embedding_50$X
+embedding_50$embedding_size = 50
+
+embedding_100 = read.table("../nlp/viridae/doc2vec_viridae_size100_history.csv", header=TRUE, sep=",")
+str(embedding_100)
+embedding_100$epoch = embedding_100$X
+embedding_100$embedding_size = 100
+
+embedding_150 = read.table("../nlp/viridae/doc2vec_viridae_size150_history.csv", header=TRUE, sep=",")
+str(embedding_150)
+embedding_150$epoch = embedding_150$X
+embedding_150$embedding_size = 150
+
+embedding_200 = read.table("../nlp/viridae/doc2vec_viridae_size200_history.csv", header=TRUE, sep=",")
+str(embedding_200)
+embedding_200$epoch = embedding_200$X
+embedding_200$embedding_size = 200
+
+
+## Appending the data:
+dat = rbind(embedding_50,embedding_100,embedding_150,embedding_200)
+str(dat)
+dat = within(dat, embedding_size<-factor(embedding_size))
+```
+Creating the plots:
+```{r}
+p21 = ggplot(dat, aes(x=epoch, y=accuracy))+geom_line(col="blue4", size=1.5)+
+  geom_line(aes(y=val_accuracy),col="darkgreen", size=1.5)+
+  ylim(c(0.5,0.99))+
+  facet_wrap(~embedding_size, scales="free_x")+
+     theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none",
+    strip.text = element_text(size = 17)
+  )
+p21
+
+pdf("embedding-size-viridae-acc.pdf",height=4, width=12)
+p21
+dev.off()
+```
+```{r}
+p22 = ggplot(dat, aes(x=epoch, y=loss))+geom_line(col="blue4", size=1.5)+
+  geom_line(aes(y=val_loss),col="darkgreen", size=1.5)+
+  ylim(c(0.0,1.2))+
+  facet_wrap(~embedding_size, scales="free_x")+
+     theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none",
+    strip.text = element_text(size = 17)
+  )
+p22
+
+pdf("embedding-size-viridae-loss.pdf",height=4, width=12)
+p22
+dev.off()
+```
+## Figure in `lstm-layer`
+Reading the data:
+```{r}
+CHIP = read.table("../nlp/CHIP/baseline_chip_sgd256_history.csv", header=TRUE, sep=",")
+str(CHIP)
+CHIP$epoch = CHIP$X
+CHIP$dataset = "CHIP"
+
+UCI = read.table("../nlp/UCI/baseline_uci_sgd256_history.csv", header=TRUE, sep=",")
+str(UCI)
+UCI$epoch = UCI$X
+UCI$dataset = "UCI"
+
+
+## Appending the data:
+dat = rbind(CHIP, UCI)
+str(dat)
+dat = within(dat, dataset<-factor(dataset))
+```
+Creating the plots:
+```{r}
+p23 = ggplot(dat, aes(x=epoch, y=accuracy))+geom_line(col="blue4", size=1.5)+
+  geom_line(aes(y=val_accuracy),col="darkgreen", size=1.5)+
+  ylim(c(0.5,0.99))+
+  facet_wrap(~dataset, scales="free_x")+
+     theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none",
+    strip.text = element_text(size = 17)
+  )
+p23
+
+pdf("lstm-layer-acc.pdf",height=4, width=12)
+p23
+dev.off()
+```
+```{r}
+p24 = ggplot(dat, aes(x=epoch, y=loss))+geom_line(col="blue4", size=1.5)+
+  geom_line(aes(y=val_loss),col="darkgreen", size=1.5)+
+  ylim(c(0.0,1.2))+
+  facet_wrap(~dataset, scales="free_x")+
+     theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none",
+    strip.text = element_text(size = 17)
+  )
+p24
+
+pdf("lstm-layer-loss.pdf",height=4, width=12)
+p24
+dev.off()
+```
+
+
+## Figure in `lstm-ae`
+Reading the data:
+```{r}
+CHIP = read.table("../nlp/CHIP/ae_chip_adam256_prediction_history.csv", header=TRUE, sep=",")
+str(CHIP)
+CHIP$epoch = CHIP$X
+CHIP$dataset = "CHIP"
+
+UCI = read.table("../nlp/UCI/ae_uci_prediction_history.csv", header=TRUE, sep=",")
+str(UCI)
+UCI$epoch = UCI$X
+UCI$dataset = "UCI"
+
+
+## Appending the data:
+dat = rbind(CHIP, UCI)
+str(dat)
+dat = within(dat, dataset<-factor(dataset))
+```
+Creating the plots:
+```{r}
+p25 = ggplot(dat, aes(x=epoch, y=accuracy))+geom_line(col="blue4", size=1.5)+
+  geom_line(aes(y=val_accuracy),col="darkgreen", size=1.5)+
+  ylim(c(0.5,0.99))+
+  facet_wrap(~dataset, scales="free_x")+
+     theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none",
+    strip.text = element_text(size = 17)
+  )
+p25
+
+pdf("lstm-ae-acc.pdf",height=4, width=12)
+p25
+dev.off()
+```
+```{r}
+p26 = ggplot(dat, aes(x=epoch, y=loss))+geom_line(col="blue4", size=1.5)+
+  geom_line(aes(y=val_loss),col="darkgreen", size=1.5)+
+  ylim(c(0.0,1.2))+
+  facet_wrap(~dataset, scales="free_x")+
+     theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none",
+    strip.text = element_text(size = 17)
+  )
+p26
+
+pdf("lstm-ae-loss.pdf",height=4, width=12)
+p26
+dev.off()
+```
+
+
+## Figure in `doc2vec`
+Reading the data:
+```{r}
+CHIP = read.table("../nlp/CHIP/doc2vec_chip_size30_history.csv", header=TRUE, sep=",")
+str(CHIP)
+CHIP$epoch = CHIP$X
+CHIP$dataset = "CHIP"
+
+UCI = read.table("../nlp/UCI/doc2vec_uci_size30_history.csv", header=TRUE, sep=",")
+str(UCI)
+UCI$epoch = UCI$X
+UCI$dataset = "UCI"
+
+
+## Appending the data:
+dat = rbind(CHIP, UCI)
+str(dat)
+dat = within(dat, dataset<-factor(dataset))
+```
+
+Creating the plots:
+```{r}
+p27 = ggplot(dat, aes(x=epoch, y=accuracy))+geom_line(col="blue4", size=1.5)+
+  geom_line(aes(y=val_accuracy),col="darkgreen", size=1.5)+
+  ylim(c(0.2,0.7))+
+  facet_wrap(~dataset, scales="free_x")+
+     theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none",
+    strip.text = element_text(size = 17)
+  )
+p27
+
+pdf("doc2vec-acc.pdf",height=4, width=12)
+p27
+dev.off()
+```
+
+```{r}
+p28 = ggplot(dat, aes(x=epoch, y=loss))+geom_line(col="blue4", size=1.5)+
+  geom_line(aes(y=val_loss),col="darkgreen", size=1.5)+
+  ylim(c(0.6,1.2))+
+  facet_wrap(~dataset, scales="free_x")+
+     theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none",
+    strip.text = element_text(size = 17)
+  )
+p28
+
+pdf("doc2vec-loss.pdf",height=4, width=12)
+p28
+dev.off()
+```
+
+
+
+
+
+
