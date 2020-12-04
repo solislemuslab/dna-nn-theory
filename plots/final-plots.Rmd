@@ -564,7 +564,7 @@ p15 = ggplot(dat, aes(x=epoch, y=accuracy))+
   )
 p15
 
-pdf("simple-two-conv2d-acc.pdf",height=4, width=8)
+pdf("one-conv2d-acc.pdf",height=4, width=8)
 p15
 dev.off()
 ```
@@ -589,7 +589,7 @@ p16 = ggplot(dat, aes(x=epoch, y=loss))+
   )
 p16
 
-pdf("simple-two-conv2d-loss.pdf",height=4, width=8)
+pdf("one-conv2d-loss.pdf",height=4, width=8)
 p16
 dev.off()
 ```
@@ -634,7 +634,7 @@ p17 = ggplot(dat, aes(x=epoch, y=accuracy))+
   )
 p17
 
-pdf("simple-two-conv1d-acc.pdf",height=4, width=8)
+pdf("one-conv1d-acc.pdf",height=4, width=8)
 p15
 dev.off()
 ```
@@ -659,7 +659,7 @@ p18 = ggplot(dat, aes(x=epoch, y=loss))+
   )
 p18
 
-pdf("simple-two-conv1d-loss.pdf",height=4, width=8)
+pdf("one-conv1d-loss.pdf",height=4, width=8)
 p18
 dev.off()
 ```
