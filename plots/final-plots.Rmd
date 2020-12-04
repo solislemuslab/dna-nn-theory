@@ -523,3 +523,143 @@ pdf("baseline-uci-loss.pdf",height=4, width=8)
 p14
 dev.off()
 ```
+
+## Figure in `fig:splice-promoter-conv2d-history`
+
+Reading the data:
+```{r}
+splice = read.table("../cnn/csv/splice-promoter/splice-conv2D.csv", header=TRUE, sep=",")
+str(splice)
+
+splice$method = "splice"
+
+promoter = read.table("../cnn/csv/splice-promoter/promoter-conv2D.csv", header=TRUE, sep=",")
+str(promoter)
+
+promoter$method = "promoter"
+
+## Append both datasets:
+dat = rbind(splice,promoter)
+dat = within(dat, method<-factor(method,levels=c("splice", "promoter")))
+str(dat)
+```
+
+```{r}
+p15 = ggplot(dat, aes(x=epoch, y=accuracy))+
+  geom_line(col="blue4", size=1.5)+
+  geom_line(aes(y=val_accuracy),col="darkgreen", size=1.5)+
+  ylim(c(0.45,1.0))+
+  facet_wrap(~method)+
+     theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none",
+    strip.text = element_text(size = 17)
+  )
+p15
+
+pdf("one-conv2d-acc.pdf",height=4, width=8)
+p15
+dev.off()
+```
+
+```{r}
+p16 = ggplot(dat, aes(x=epoch, y=loss))+
+  geom_line(col="blue4", size=1.5)+
+  geom_line(aes(y=val_loss),col="darkgreen", size=1.5)+
+  ylim(c(0.0,0.72))+
+  facet_wrap(~method)+
+     theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none",
+    strip.text = element_text(size = 17)
+  )
+p16
+
+pdf("one-conv2d-loss.pdf",height=4, width=8)
+p16
+dev.off()
+```
+
+## Figure in `fig:splice-promoter-conv1d-history`
+
+Reading the data:
+```{r}
+splice = read.table("../cnn/csv/splice-promoter/splice-conv1D.csv", header=TRUE, sep=",")
+str(splice)
+
+splice$method = "splice"
+
+promoter = read.table("../cnn/csv/splice-promoter/promoter-conv1D.csv", header=TRUE, sep=",")
+str(promoter)
+
+promoter$method = "promoter"
+
+## Append both datasets:
+dat = rbind(splice,promoter)
+dat = within(dat, method<-factor(method,levels=c("splice", "promoter")))
+str(dat)
+```
+
+```{r}
+p17 = ggplot(dat, aes(x=epoch, y=accuracy))+
+  geom_line(col="blue4", size=1.5)+
+  geom_line(aes(y=val_accuracy),col="darkgreen", size=1.5)+
+  ylim(c(0.375,1.0))+
+  facet_wrap(~method)+
+     theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none",
+    strip.text = element_text(size = 17)
+  )
+p17
+
+pdf("one-conv1d-acc.pdf",height=4, width=8)
+p15
+dev.off()
+```
+
+```{r}
+p18 = ggplot(dat, aes(x=epoch, y=loss))+
+  geom_line(col="blue4", size=1.5)+
+  geom_line(aes(y=val_loss),col="darkgreen", size=1.5)+
+  ylim(c(0.0,1.05))+
+  facet_wrap(~method)+
+     theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), legend.title=element_text(size=rel(1.5)),
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    legend.position="none",
+    strip.text = element_text(size = 17)
+  )
+p18
+
+pdf("one-conv1d-loss.pdf",height=4, width=8)
+p18
+dev.off()
+```
