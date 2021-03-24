@@ -837,7 +837,7 @@ Creating the plots:
 ```{r}
 p21 = ggplot(dat, aes(x=epoch, y=accuracy))+geom_line(col="blue4", size=1.5)+
   geom_line(aes(y=val_accuracy),col="darkgreen", size=1.5)+
-  ylim(c(0.5,0.99))+
+  ylim(c(0.45,0.99))+
   facet_wrap(~embedding_size, scales="free_x")+
      theme(
     plot.title = element_text(hjust=0.5, size=rel(1.6)),
@@ -853,14 +853,14 @@ p21 = ggplot(dat, aes(x=epoch, y=accuracy))+geom_line(col="blue4", size=1.5)+
   )
 p21
 
-pdf("embedding-size-viridae-acc.pdf",height=4, width=12)
+pdf("embedding-size-viridae-acc.pdf",height=8, width=8)
 p21
 dev.off()
 ```
 ```{r}
 p22 = ggplot(dat, aes(x=epoch, y=loss))+geom_line(col="blue4", size=1.5)+
   geom_line(aes(y=val_loss),col="darkgreen", size=1.5)+
-  ylim(c(0.0,1.2))+
+  ylim(c(0.0,1.0))+
   facet_wrap(~embedding_size, scales="free_x")+
      theme(
     plot.title = element_text(hjust=0.5, size=rel(1.6)),
@@ -876,7 +876,7 @@ p22 = ggplot(dat, aes(x=epoch, y=loss))+geom_line(col="blue4", size=1.5)+
   )
 p22
 
-pdf("embedding-size-viridae-loss.pdf",height=4, width=12)
+pdf("embedding-size-viridae-loss.pdf",height=8, width=8)
 p22
 dev.off()
 ```
@@ -954,12 +954,12 @@ Reading the data:
 CHIP = read.table("../nlp/CHIP/ae_chip_adam256_prediction_history.csv", header=TRUE, sep=",")
 str(CHIP)
 CHIP$epoch = CHIP$X
-CHIP$dataset = "CHIP"
+CHIP$dataset = "ChIP-seq toy"
 
 UCI = read.table("../nlp/UCI/ae_uci_prediction_history.csv", header=TRUE, sep=",")
 str(UCI)
 UCI$epoch = UCI$X
-UCI$dataset = "UCI"
+UCI$dataset = "splice"
 
 
 ## Appending the data:
@@ -987,7 +987,7 @@ p25 = ggplot(dat, aes(x=epoch, y=accuracy))+geom_line(col="blue4", size=1.5)+
   )
 p25
 
-pdf("lstm-ae-acc.pdf",height=4, width=12)
+pdf("lstm-ae-acc.pdf",height=4, width=8)
 p25
 dev.off()
 ```
@@ -1010,7 +1010,7 @@ p26 = ggplot(dat, aes(x=epoch, y=loss))+geom_line(col="blue4", size=1.5)+
   )
 p26
 
-pdf("lstm-ae-loss.pdf",height=4, width=12)
+pdf("lstm-ae-loss.pdf",height=4, width=8)
 p26
 dev.off()
 ```
@@ -1022,12 +1022,12 @@ Reading the data:
 CHIP = read.table("../nlp/CHIP/doc2vec_chip_size30_history.csv", header=TRUE, sep=",")
 str(CHIP)
 CHIP$epoch = CHIP$X
-CHIP$dataset = "CHIP"
+CHIP$dataset = "ChIP-seq toy"
 
 UCI = read.table("../nlp/UCI/doc2vec_uci_size30_history.csv", header=TRUE, sep=",")
 str(UCI)
 UCI$epoch = UCI$X
-UCI$dataset = "UCI"
+UCI$dataset = "splice"
 
 
 ## Appending the data:
@@ -1040,7 +1040,7 @@ Creating the plots:
 ```{r}
 p27 = ggplot(dat, aes(x=epoch, y=accuracy))+geom_line(col="blue4", size=1.5)+
   geom_line(aes(y=val_accuracy),col="darkgreen", size=1.5)+
-  ylim(c(0.2,0.7))+
+  ylim(c(0.47,0.57))+
   facet_wrap(~dataset, scales="free_x")+
      theme(
     plot.title = element_text(hjust=0.5, size=rel(1.6)),
@@ -1056,7 +1056,7 @@ p27 = ggplot(dat, aes(x=epoch, y=accuracy))+geom_line(col="blue4", size=1.5)+
   )
 p27
 
-pdf("doc2vec-acc.pdf",height=4, width=12)
+pdf("doc2vec-acc.pdf",height=4, width=8)
 p27
 dev.off()
 ```
@@ -1064,7 +1064,7 @@ dev.off()
 ```{r}
 p28 = ggplot(dat, aes(x=epoch, y=loss))+geom_line(col="blue4", size=1.5)+
   geom_line(aes(y=val_loss),col="darkgreen", size=1.5)+
-  ylim(c(0.6,1.2))+
+  ylim(c(0.65,1.2))+
   facet_wrap(~dataset, scales="free_x")+
      theme(
     plot.title = element_text(hjust=0.5, size=rel(1.6)),
@@ -1080,7 +1080,7 @@ p28 = ggplot(dat, aes(x=epoch, y=loss))+geom_line(col="blue4", size=1.5)+
   )
 p28
 
-pdf("doc2vec-loss.pdf",height=4, width=12)
+pdf("doc2vec-loss.pdf",height=4, width=8)
 p28
 dev.off()
 ```
