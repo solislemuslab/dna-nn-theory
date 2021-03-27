@@ -1,4 +1,654 @@
-# Final plots in the manuscript
+# Final plots in the manuscript (BMC)
+Necessary package:
+```{r}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+library(scales)
+```
+
+Color palettes
+```{r}
+library(viridis)
+library(RColorBrewer)
+cbp1 <- c("#999999", "#E69F00", "#56B4E9", "#009E73",
+          "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+display.brewer.all(colorblindFriendly = TRUE)
+```
+
+## Role of dimension/layers
+
+Models:
+- CNN-Nguyen (original 2D, extra 1D)
+- CNN-Zeng (original 2 layers, 3 layers, 4 layers)
+
+### Plotting accuracy
+
+Reading the data:
+```{r}
+nguyen2dhistone = read.table("../cn/results/cnn_nguyen_2_conv2d-histone-accuracy.csv", header=TRUE, sep=",")
+nguyen2dsplice = read.table("../cn/results/cnn_nguyen_2_conv2d-splice-accuracy.csv", header=TRUE, sep=",")
+nguyen2dmotif = read.table("../cn/results/cnn_nguyen_2_conv2d-motif_discovery-accuracy.csv", header=TRUE, sep=",")
+
+
+nguyen1dhistone = read.table("../cn/results/cnn_nguyen_conv1d_2_conv2d-histone-accuracy.csv", header=TRUE, sep=",")
+nguyen1dsplice = read.table("../cn/results/cnn_nguyen_conv1d_2_conv2d-splice-accuracy.csv", header=TRUE, sep=",")
+nguyen1dmotif = read.table("../cn/results/cnn_nguyen_conv1d_2_conv2d-motif_discovery-accuracy.csv", header=TRUE, sep=",")
+
+zeng2histone = read.table("../cn/results/cnn_zeng_2_conv2d-histone-accuracy.csv", header=TRUE, sep=",")
+zeng2splice = read.table("../cn/results/cnn_zeng_2_conv2d-splice-accuracy.csv", header=TRUE, sep=",")
+zeng2motif = read.table("../cn/results/cnn_zeng_2_conv2d-motif_discovery-accuracy.csv", header=TRUE, sep=",")
+
+zeng3histone = read.table("../cn/results/cnn_zeng_3_conv2d-histone-accuracy.csv", header=TRUE, sep=",")
+zeng3splice = read.table("../cn/results/cnn_zeng_3_conv2d-splice-accuracy.csv", header=TRUE, sep=",")
+zeng3motif = read.table("../cn/results/cnn_zeng_3_conv2d-motif_discovery-accuracy.csv", header=TRUE, sep=",")
+
+zeng4histone = read.table("../cn/results/cnn_zeng_4_conv2d-histone-accuracy.csv", header=TRUE, sep=",")
+zeng4splice = read.table("../cn/results/cnn_zeng_4_conv2d-splice-accuracy.csv", header=TRUE, sep=",")
+zeng4motif = read.table("../cn/results/cnn_zeng_4_conv2d-motif_discovery-accuracy.csv", header=TRUE, sep=",")
+
+
+## Appending all data
+histone = rbind(nguyen2dhistone, nguyen1dhistone, zeng2histone, zeng3histone, zeng4histone)
+histone2 = gather(histone, "type", "acc")
+histone2$model = rep(c("CNN-Nguyen2D", "CNN-Nguyen2D+1D", "CNN-Zeng2", "CNN-Zeng3", "CNN-Zeng4"),3)
+histone2
+
+splice = rbind(nguyen2dsplice, nguyen1dsplice, zeng2splice, zeng3splice, zeng4splice)
+splice2 = gather(splice, "type", "acc")
+splice2$model = rep(c("CNN-Nguyen2D", "CNN-Nguyen2D+1D", "CNN-Zeng2", "CNN-Zeng3", "CNN-Zeng4"),3)
+splice2
+
+motif = rbind(nguyen2dmotif, nguyen1dmotif, zeng2motif, zeng3motif, zeng4motif)
+motif2 = gather(motif, "type", "acc")
+motif2$model = rep(c("CNN-Nguyen2D", "CNN-Nguyen2D+1D", "CNN-Zeng2", "CNN-Zeng3", "CNN-Zeng4"),3)
+motif2
+```
+
+Plots Splice data:
+```{r}
+splice2 = within(splice2, type<-factor(type, labels=c("training", "testing", "validating")))
+splice2 = within(splice2, type<-factor(type, levels=c("training", "validating", "testing")))
+
+p = ggplot(splice2, aes(x=model, y=acc, fill=type)) +
+  geom_bar(position="dodge", stat="identity") +
+  scale_y_continuous(limits=c(0.5,1),oob = rescale_none) +
+  #scale_fill_manual(values = cbp1)
+  #scale_fill_viridis(discrete=TRUE)
+  #scale_fill_brewer(palette="PuBu")
+  scale_fill_brewer(palette="Blues") +
+  xlab("") + ylab("") +
+  ggtitle("Splice data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.5), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.4), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), 
+    legend.title=element_blank(),
+    legend.position = "bottom",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pdf("splice-dimension-layers-acc.pdf",height=6, width=8.75)
+p
+dev.off()
+```
+
+Plots Histone data:
+```{r}
+histone2 = within(histone2, type<-factor(type, labels=c("training", "testing", "validating")))
+histone2 = within(histone2, type<-factor(type, levels=c("training", "validating", "testing")))
+
+p2 = ggplot(histone2, aes(x=model, y=acc, fill=type)) +
+  geom_bar(position="dodge", stat="identity") +
+  scale_y_continuous(limits=c(0.5,1),oob = rescale_none) +
+  #scale_fill_manual(values = cbp1)
+  #scale_fill_viridis(discrete=TRUE)
+  #scale_fill_brewer(palette="PuBu")
+  scale_fill_brewer(palette="Blues") +
+  xlab("") + ylab("") +
+  ggtitle("Histone data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.5), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.4), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), 
+    legend.title=element_blank(),
+    legend.position = "bottom",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pdf("histone-dimension-layers-acc.pdf",height=6, width=8.75)
+p2
+dev.off()
+```
+
+Plots Motif data:
+```{r}
+motif2 = within(motif2, type<-factor(type, labels=c("training", "testing", "validating")))
+motif2 = within(motif2, type<-factor(type, levels=c("training", "validating", "testing")))
+
+p3 = ggplot(motif2, aes(x=model, y=acc, fill=type)) +
+  geom_bar(position="dodge", stat="identity") +
+  scale_y_continuous(limits=c(0.5,1),oob = rescale_none) +
+  #scale_fill_manual(values = cbp1)
+  #scale_fill_viridis(discrete=TRUE)
+  #scale_fill_brewer(palette="PuBu")
+  scale_fill_brewer(palette="Blues") +
+  xlab("") + ylab("") +
+  ggtitle("Motif discovery data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.5), angle=0, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.4), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), 
+    legend.title=element_blank(),
+    legend.position = "bottom",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pdf("motif-dimension-layers-acc.pdf",height=6, width=8.75)
+p3
+dev.off()
+```
+
+### Plotting precision-recall
+
+Reading the data:
+```{r}
+nguyen2dhistone = read.table("../cn/results/cnn_nguyen_2_conv2d-histone-pr.csv", header=TRUE, sep=",")
+nguyen2dsplice = read.table("../cn/results/cnn_nguyen_2_conv2d-splice-pr.csv", header=TRUE, sep=",")
+nguyen2dmotif = read.table("../cn/results/cnn_nguyen_2_conv2d-motif_discovery-pr.csv", header=TRUE, sep=",")
+nguyen2dhistone$model = "CNN-Nguyen2D"
+nguyen2dsplice$model = "CNN-Nguyen2D"
+nguyen2dmotif$model = "CNN-Nguyen2D"
+
+nguyen1dhistone = read.table("../cn/results/cnn_nguyen_conv1d_2_conv2d-histone-pr.csv", header=TRUE, sep=",")
+nguyen1dsplice = read.table("../cn/results/cnn_nguyen_conv1d_2_conv2d-splice-pr.csv", header=TRUE, sep=",")
+nguyen1dmotif = read.table("../cn/results/cnn_nguyen_conv1d_2_conv2d-motif_discovery-pr.csv", header=TRUE, sep=",")
+nguyen1dhistone$model = "CNN-Nguyen2D+1D"
+nguyen1dsplice$model = "CNN-Nguyen2D+1D"
+nguyen1dmotif$model = "CNN-Nguyen2D+1D"
+
+zeng2histone = read.table("../cn/results/cnn_zeng_2_conv2d-histone-pr.csv", header=TRUE, sep=",")
+zeng2splice = read.table("../cn/results/cnn_zeng_2_conv2d-splice-pr.csv", header=TRUE, sep=",")
+zeng2motif = read.table("../cn/results/cnn_zeng_2_conv2d-motif_discovery-pr.csv", header=TRUE, sep=",")
+zeng2histone$model = "CNN-Zeng2"
+zeng2splice$model = "CNN-Zeng2"
+zeng2motif$model = "CNN-Zeng2"
+
+zeng3histone = read.table("../cn/results/cnn_zeng_3_conv2d-histone-pr.csv", header=TRUE, sep=",")
+zeng3splice = read.table("../cn/results/cnn_zeng_3_conv2d-splice-pr.csv", header=TRUE, sep=",")
+zeng3motif = read.table("../cn/results/cnn_zeng_3_conv2d-motif_discovery-pr.csv", header=TRUE, sep=",")
+zeng3histone$model = "CNN-Zeng3"
+zeng3splice$model = "CNN-Zeng3"
+zeng3motif$model = "CNN-Zeng3"
+
+zeng4histone = read.table("../cn/results/cnn_zeng_4_conv2d-histone-pr.csv", header=TRUE, sep=",")
+zeng4splice = read.table("../cn/results/cnn_zeng_4_conv2d-splice-pr.csv", header=TRUE, sep=",")
+zeng4motif = read.table("../cn/results/cnn_zeng_4_conv2d-motif_discovery-pr.csv", header=TRUE, sep=",")
+zeng4histone$model = "CNN-Zeng4"
+zeng4splice$model = "CNN-Zeng4"
+zeng4motif$model = "CNN-Zeng4"
+
+
+## Appending all data
+histone = rbind(nguyen2dhistone, nguyen1dhistone, zeng2histone, zeng3histone, zeng4histone)
+str(histone)
+
+splice = rbind(nguyen2dsplice, nguyen1dsplice, zeng2splice, zeng3splice, zeng4splice)
+str(splice)
+
+motif = rbind(nguyen2dmotif, nguyen1dmotif, zeng2motif, zeng3motif, zeng4motif)
+str(motif)
+```
+
+Plotting Splice data:
+```{r}
+## Note that splice data has three levels, so ovr=0 means that one class is 0 and 1,2 are the other class
+p = ggplot(splice, aes(x=recall, y=precision, color=model)) +
+  geom_line(size=1) + facet_wrap(~as.factor(ovr)) +
+  ylim(c(0.5,1)) +
+  geom_hline(yintercept=0.5, linetype = "dashed") +
+  #scale_color_manual(values = cbp1) +
+  scale_color_brewer(palette="YlGnBu") +
+  xlab("Recall") + ylab("Precision") +
+  ggtitle("Splice data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.5), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.4), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), 
+    legend.title=element_blank(),
+    legend.position = "none",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pdf("splice-dimension-layers-pr.pdf",height=6, width=9)
+p
+dev.off()
+```
+
+Plotting Histone data:
+```{r}
+p2 = ggplot(histone, aes(x=recall, y=precision, color=model)) +
+  geom_line(size=1) +
+  ylim(c(0.5,1)) +
+  geom_hline(yintercept=0.5, linetype = "dashed") +
+  #scale_color_manual(values = cbp1) +
+  scale_color_brewer(palette="YlGnBu") +
+  xlab("Recall") + ylab("") +
+  ggtitle("Histone data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.5), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.4), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), 
+    legend.title=element_blank(),
+    legend.position = "none",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pdf("histone-dimension-layers-pr.pdf",height=6, width=3.5)
+p2
+dev.off()
+```
+
+Plotting Motif data:
+```{r}
+## Motif data is very large, so we will randomly select rows to plot
+str(motif)
+n = length(motif$precision)
+k = floor(n/10)
+motif2 = motif[sample(nrow(motif), k), ]
+
+p3 = ggplot(motif2, aes(x=recall, y=precision, color=model)) +
+  geom_line(size=1) +
+  ylim(c(0.5,1)) +
+  geom_hline(yintercept=0.5, linetype = "dashed") +
+  #scale_color_manual(values = cbp1) +
+  scale_color_brewer(palette="YlGnBu") +
+  xlab("Recall") + ylab("") +
+  ggtitle("Motif discovery data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.5), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.4), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(0.8)), 
+    legend.title=element_blank(),
+    #legend.position = "none",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pdf("motif-dimension-layers-pr.pdf",height=6, width=5)
+p3
+dev.off()
+```
+
+### Plotting ROC curves
+
+Reading the data:
+```{r}
+nguyen2dhistone = read.table("../cn/results/cnn_nguyen_2_conv2d-histone-roc.csv", header=TRUE, sep=",")
+nguyen2dsplice = read.table("../cn/results/cnn_nguyen_2_conv2d-splice-roc.csv", header=TRUE, sep=",")
+nguyen2dmotif = read.table("../cn/results/cnn_nguyen_2_conv2d-motif_discovery-roc.csv", header=TRUE, sep=",")
+nguyen2dhistone$model = "CNN-Nguyen2D"
+nguyen2dsplice$model = "CNN-Nguyen2D"
+nguyen2dmotif$model = "CNN-Nguyen2D"
+
+nguyen1dhistone = read.table("../cn/results/cnn_nguyen_conv1d_2_conv2d-histone-roc.csv", header=TRUE, sep=",")
+nguyen1dsplice = read.table("../cn/results/cnn_nguyen_conv1d_2_conv2d-splice-roc.csv", header=TRUE, sep=",")
+nguyen1dmotif = read.table("../cn/results/cnn_nguyen_conv1d_2_conv2d-motif_discovery-roc.csv", header=TRUE, sep=",")
+nguyen1dhistone$model = "CNN-Nguyen2D+1D"
+nguyen1dsplice$model = "CNN-Nguyen2D+1D"
+nguyen1dmotif$model = "CNN-Nguyen2D+1D"
+
+zeng2histone = read.table("../cn/results/cnn_zeng_2_conv2d-histone-roc.csv", header=TRUE, sep=",")
+zeng2splice = read.table("../cn/results/cnn_zeng_2_conv2d-splice-roc.csv", header=TRUE, sep=",")
+zeng2motif = read.table("../cn/results/cnn_zeng_2_conv2d-motif_discovery-roc.csv", header=TRUE, sep=",")
+zeng2histone$model = "CNN-Zeng2"
+zeng2splice$model = "CNN-Zeng2"
+zeng2motif$model = "CNN-Zeng2"
+
+zeng3histone = read.table("../cn/results/cnn_zeng_3_conv2d-histone-roc.csv", header=TRUE, sep=",")
+zeng3splice = read.table("../cn/results/cnn_zeng_3_conv2d-splice-roc.csv", header=TRUE, sep=",")
+zeng3motif = read.table("../cn/results/cnn_zeng_3_conv2d-motif_discovery-roc.csv", header=TRUE, sep=",")
+zeng3histone$model = "CNN-Zeng3"
+zeng3splice$model = "CNN-Zeng3"
+zeng3motif$model = "CNN-Zeng3"
+
+zeng4histone = read.table("../cn/results/cnn_zeng_4_conv2d-histone-roc.csv", header=TRUE, sep=",")
+zeng4splice = read.table("../cn/results/cnn_zeng_4_conv2d-splice-roc.csv", header=TRUE, sep=",")
+zeng4motif = read.table("../cn/results/cnn_zeng_4_conv2d-motif_discovery-roc.csv", header=TRUE, sep=",")
+zeng4histone$model = "CNN-Zeng4"
+zeng4splice$model = "CNN-Zeng4"
+zeng4motif$model = "CNN-Zeng4"
+
+
+## Appending all data
+histone = rbind(nguyen2dhistone, nguyen1dhistone, zeng2histone, zeng3histone, zeng4histone)
+str(histone)
+
+splice = rbind(nguyen2dsplice, nguyen1dsplice, zeng2splice, zeng3splice, zeng4splice)
+str(splice)
+
+motif = rbind(nguyen2dmotif, nguyen1dmotif, zeng2motif, zeng3motif, zeng4motif)
+str(motif)
+```
+Plotting Splice data:
+```{r}
+## Note that splice data has three levels, so ovr=0 means that one class is 0 and 1,2 are the other class
+p = ggplot(splice, aes(x=fpr, y=tpr, color=model)) +
+  geom_line(size=1) + facet_wrap(~as.factor(ovr)) +
+  geom_abline(slope=1, linetype = "dashed") +
+  #scale_color_manual(values = cbp1) +
+  scale_color_brewer(palette="YlGnBu") +
+  xlab("False Positive Rate") + ylab("True Positive Rate") +
+  ggtitle("Splice data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.5), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.4), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), 
+    legend.title=element_blank(),
+    legend.position = "none",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pdf("splice-dimension-layers-roc.pdf",height=6, width=9)
+p
+dev.off()
+```
+
+Plotting Histone data:
+```{r}
+p2 = ggplot(histone, aes(x=fpr, y=tpr, color=model)) +
+  geom_line(size=1) +
+  geom_abline(slope=1, linetype = "dashed") +
+  #scale_color_manual(values = cbp1) +
+  scale_color_brewer(palette="YlGnBu") +
+  xlab("False Positive Rate") + ylab("") +
+  ggtitle("Histone data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.5), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.4), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), 
+    legend.title=element_blank(),
+    legend.position = "none",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pdf("histone-dimension-layers-roc.pdf",height=6, width=3.5)
+p2
+dev.off()
+```
+
+Plotting Motif data:
+```{r}
+## Motif data is very large, so we will randomly select rows to plot
+str(motif)
+n = length(motif$fpr)
+k = floor(n/10)
+motif2 = motif[sample(nrow(motif), k), ]
+
+p3 = ggplot(motif2, aes(x=fpr, y=tpr, color=model)) +
+  geom_line(size=1) +
+  geom_abline(slope=1, linetype = "dashed") +
+  #scale_color_manual(values = cbp1) +
+  scale_color_brewer(palette="YlGnBu") +
+  xlab("False Positive Rate") + ylab("") +
+  ggtitle("Motif discovery data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.5), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.4), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(0.8)), 
+    legend.title=element_blank(),
+    #legend.position = "none",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pdf("motif-dimension-layers-roc.pdf",height=6, width=5)
+p3
+dev.off()
+```
+
+### Learning dynamics for SM
+
+Reading the data:
+```{r}
+nguyen2dhistone = read.table("../cn/results/cnn_nguyen_2_conv2d-histone-dynamics.csv", header=TRUE, sep=",")
+nguyen2dsplice = read.table("../cn/results/cnn_nguyen_2_conv2d-splice-dynamics.csv", header=TRUE, sep=",")
+nguyen2dmotif = read.table("../cn/results/cnn_nguyen_2_conv2d-motif_discovery-dynamics.csv", header=TRUE, sep=",")
+nguyen2dhistone$model = "CNN-Nguyen2D"
+nguyen2dsplice$model = "CNN-Nguyen2D"
+nguyen2dmotif$model = "CNN-Nguyen2D"
+
+nguyen1dhistone = read.table("../cn/results/cnn_nguyen_conv1d_2_conv2d-histone-dynamics.csv", header=TRUE, sep=",")
+nguyen1dsplice = read.table("../cn/results/cnn_nguyen_conv1d_2_conv2d-splice-dynamics.csv", header=TRUE, sep=",")
+nguyen1dmotif = read.table("../cn/results/cnn_nguyen_conv1d_2_conv2d-motif_discovery-dynamics.csv", header=TRUE, sep=",")
+nguyen1dhistone$model = "CNN-Nguyen2D+1D"
+nguyen1dsplice$model = "CNN-Nguyen2D+1D"
+nguyen1dmotif$model = "CNN-Nguyen2D+1D"
+
+zeng2histone = read.table("../cn/results/cnn_zeng_2_conv2d-histone-dynamics.csv", header=TRUE, sep=",")
+zeng2splice = read.table("../cn/results/cnn_zeng_2_conv2d-splice-dynamics.csv", header=TRUE, sep=",")
+zeng2motif = read.table("../cn/results/cnn_zeng_2_conv2d-motif_discovery-dynamics.csv", header=TRUE, sep=",")
+zeng2histone$model = "CNN-Zeng2"
+zeng2splice$model = "CNN-Zeng2"
+zeng2motif$model = "CNN-Zeng2"
+
+zeng3histone = read.table("../cn/results/cnn_zeng_3_conv2d-histone-dynamics.csv", header=TRUE, sep=",")
+zeng3splice = read.table("../cn/results/cnn_zeng_3_conv2d-splice-dynamics.csv", header=TRUE, sep=",")
+zeng3motif = read.table("../cn/results/cnn_zeng_3_conv2d-motif_discovery-dynamics.csv", header=TRUE, sep=",")
+zeng3histone$model = "CNN-Zeng3"
+zeng3splice$model = "CNN-Zeng3"
+zeng3motif$model = "CNN-Zeng3"
+
+zeng4histone = read.table("../cn/results/cnn_zeng_4_conv2d-histone-dynamics.csv", header=TRUE, sep=",")
+zeng4splice = read.table("../cn/results/cnn_zeng_4_conv2d-splice-dynamics.csv", header=TRUE, sep=",")
+zeng4motif = read.table("../cn/results/cnn_zeng_4_conv2d-motif_discovery-dynamics.csv", header=TRUE, sep=",")
+zeng4histone$model = "CNN-Zeng4"
+zeng4splice$model = "CNN-Zeng4"
+zeng4motif$model = "CNN-Zeng4"
+
+
+## Appending all data
+histone = rbind(nguyen2dhistone, nguyen1dhistone, zeng2histone, zeng3histone, zeng4histone)
+str(histone)
+
+splice = rbind(nguyen2dsplice, nguyen1dsplice, zeng2splice, zeng3splice, zeng4splice)
+str(splice)
+
+motif = rbind(nguyen2dmotif, nguyen1dmotif, zeng2motif, zeng3motif, zeng4motif)
+str(motif)
+```
+
+Plotting Splice data:
+```{r}
+p = ggplot(splice, aes(x=epoch,y=accuracy, color=model))+
+  geom_line(size=1) + geom_line(aes(y=val_accuracy,color=model), linetype="dotted", size=1)+
+    scale_color_brewer(palette="YlGnBu") +
+  xlab("Epoch") + ylab("Accuracy") +
+  ggtitle("Splice data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.5), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.4), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(0.8)), 
+    legend.title=element_blank(),
+    legend.position = "bottom",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pl = ggplot(splice, aes(x=epoch,y=loss, color=model))+
+  geom_line(size=1) + geom_line(aes(y=val_loss,color=model), linetype="dotted", size=1)+
+    scale_color_brewer(palette="YlGnBu") +
+  xlab("Epoch") + ylab("Loss") +
+  ggtitle("Splice data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.5), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.4), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(0.8)), 
+    legend.title=element_blank(),
+    legend.position = "bottom",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pdf("splice-dimension-layers-dynamics.pdf",height=6, width=7)
+p
+dev.off()
+
+pdf("splice-dimension-layers-dynamics-loss.pdf",height=6, width=7)
+pl
+dev.off()
+```
+
+Plotting Histone data:
+```{r}
+p2 = ggplot(histone, aes(x=epoch,y=accuracy, color=model))+
+  geom_line(size=1) + geom_line(aes(y=val_accuracy,color=model), linetype="dotted", size=1)+
+    scale_color_brewer(palette="YlGnBu") +
+  xlab("Epoch") + ylab("Accuracy") +
+  ggtitle("Histone data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.5), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.4), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(0.8)), 
+    legend.title=element_blank(),
+    legend.position = "bottom",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pl2 = ggplot(histone, aes(x=epoch,y=loss, color=model))+
+  geom_line(size=1) + geom_line(aes(y=val_loss,color=model), linetype="dotted", size=1)+
+    scale_color_brewer(palette="YlGnBu") +
+  xlab("Epoch") + ylab("Loss") +
+  ggtitle("Histone data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.5), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.4), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(0.8)), 
+    legend.title=element_blank(),
+    legend.position = "bottom",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pdf("histone-dimension-layers-dynamics.pdf",height=6, width=7)
+p2
+dev.off()
+
+pdf("histone-dimension-layers-dynamics-loss.pdf",height=6, width=7)
+pl2
+dev.off()
+```
+
+Plotting Motif data:
+```{r}
+p3 = ggplot(motif, aes(x=epoch,y=accuracy, color=model))+
+  geom_line(size=1) + geom_line(aes(y=val_accuracy,color=model), linetype="dotted", size=1)+
+    scale_color_brewer(palette="YlGnBu") +
+  xlab("Epoch") + ylab("Accuracy") +
+  ggtitle("Motif discovery data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.5), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.4), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(0.8)), 
+    legend.title=element_blank(),
+    legend.position = "bottom",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pl3 = ggplot(motif, aes(x=epoch,y=loss, color=model))+
+  geom_line(size=1) + geom_line(aes(y=val_loss,color=model), linetype="dotted", size=1)+
+    scale_color_brewer(palette="YlGnBu") +
+  xlab("Epoch") + ylab("Loss") +
+  ggtitle("Motif discovery data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.5), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.4), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(0.8)), 
+    legend.title=element_blank(),
+    legend.position = "bottom",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pdf("motif-dimension-layers-dynamics.pdf",height=6, width=7)
+p3
+dev.off()
+
+pdf("motif-dimension-layers-dynamics-loss.pdf",height=6, width=7)
+pl3
+dev.off()
+```
+
+# Final plots in the manuscript (JMLR)
 
 Necessary package:
 ```{r}
