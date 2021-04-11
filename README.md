@@ -3,29 +3,11 @@ Zhaoyi Zhang, Songyang Cheng, Claudia Solis-Lemus
 
 ## Reproducible scripts
 
-### CNN-Nguyen
-- promoter.ipynb
+### CNN
+
 - histone.ipynb
+- motif_discovery.ipynb
 - splice.ipynb
-
-### CNN-Zeng
-- cifar-10.ipynb
-- motif-discovery.ipynb
-- motif-discovery-no-transfer-learning.ipynb
-- motif-discovery-transfer-learning.ipynb
-
-### DeepDBP
-deepdbp.ipynb
-
-### DeepRAM
-deepram/:
-
-- conv1d-embed.ipynb
-- conv1d-onehot.ipynb
-- conv1d-recurrent-embed.ipynb
-- conv1d-recurrent-onehot.ipynb
-- recurrent-embed.ipynb
-- recurrent-onehot.ipynb
 
 ### LSTM-layer
 - supervised_chip(256_adam)_save_embeddings.ipynb
