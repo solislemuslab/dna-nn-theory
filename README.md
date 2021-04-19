@@ -39,7 +39,7 @@ deepram/:
 - supervised_viridae(rear)_sgd256_save_embedding.ipynb
 
 
-- uci_baseline_adam256_save embedding.ipynb
+- uci_baseline_adam256.ipynb
 - histone_lstm_layer_adam.ipynb
 - histone_lstm_layer_sgd.ipynb
 - discovery_baseline.py
