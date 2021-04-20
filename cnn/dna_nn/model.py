@@ -1,9 +1,11 @@
+import numpy as np
 import pandas as pd
 from sklearn.metrics import precision_recall_curve, roc_curve
 import tensorflow as tf
 from tensorflow import keras
-from tensorflow.keras.layers import Conv2D, Embedding, Dense, GlobalMaxPooling2D, MaxPooling2D
-from tensorflow.keras.layers import BatchNormalization, Dropout, Flatten, Reshape
+from tensorflow.keras.layers import Conv1D, Conv2D, Embedding, Dense, LSTM
+from tensorflow.keras.layers import GlobalMaxPooling1D, GlobalMaxPooling2D, MaxPooling1D, MaxPooling2D
+from tensorflow.keras.layers import BatchNormalization, Dropout, Flatten, Input, Reshape
 
 def cnn_nguyen_2_conv2d(x_shape, classes=2):
     model = keras.Sequential([
@@ -88,11 +90,32 @@ def cnn_zeng_4_conv2d(x_shape, classes=2):
     ])
     return model
 
+def cnn_zeng_4_conv2d_l2(x_shape, classes=2):
+    model = keras.Sequential([
+        Conv2D(16, 3, activation='relu', input_shape=x_shape),
+        BatchNormalization(),
+        MaxPooling2D(),
+        Conv2D(32, 3, activation='relu', kernel_regularizer='l2'),
+        BatchNormalization(),
+        MaxPooling2D(),
+        Conv2D(64, 3, activation='relu', kernel_regularizer='l2'),
+        BatchNormalization(),
+        MaxPooling2D(),
+        Conv2D(128, 3, activation='relu', kernel_regularizer='l2'),
+        BatchNormalization(),
+        GlobalMaxPooling2D(),
+        Flatten(),
+        Dense(32, activation='relu'),
+        Dropout(0.5),
+        Dense(1, activation='sigmoid') if classes < 3 else Dense(classes, activation='softmax')
+    ])
+    return model
+
 def cnn_deepdbp(x_shape, classes=2):
     model = keras.Sequential([
-        keras.Input(shape=(101)),
-        Embedding(input_dim=101, output_dim=128),
-        Reshape((101, 128, 1)),
+        keras.Input(shape=(x_shape)),
+        Embedding(input_dim=x_shape, output_dim=128),
+        Reshape((x_shape, 128, 1)),
         Conv2D(128, (1, 31), padding='same', activation='relu'),
         MaxPooling2D(pool_size=(1, 31)),
         Flatten(),
@@ -104,6 +127,93 @@ def cnn_deepdbp(x_shape, classes=2):
         Dense(1, activation='sigmoid') if classes < 3 else Dense(classes, activation='softmax')
     ])
     return model
+
+def deepram_conv1d_onehot(x_shape, classes=2):
+    model = keras.Sequential([
+        Input(shape=x_shape),
+        Dropout(0.5),
+        Conv1D(64, 3, activation='relu'),
+        MaxPooling1D(),
+        Conv1D(128, 3, activation='relu'),
+        GlobalMaxPooling1D(),
+        Dense(128),
+        Dropout(0.5),
+        Dense(1, activation='sigmoid') if classes < 3 else Dense(classes, activation='softmax')
+    ])
+    return model
+
+def deepram_conv1d_embed(x_shape, classes=2):
+    model = keras.Sequential([
+        Input(shape=(x_shape)),
+        Embedding(x_shape, 256),
+        Dropout(0.5),
+        Conv1D(64, 3, activation='relu'),
+        MaxPooling1D(),
+        Conv1D(128, 3, activation='relu'),
+        GlobalMaxPooling1D(),
+        Dense(128),
+        Dropout(0.5),
+        Dense(1, activation='sigmoid') if classes < 3 else Dense(classes, activation='softmax')
+    ])
+    return model
+
+def deepram_conv1d_recurrent_onehot(x_shape, classes=2):
+    model = keras.Sequential([
+        Input(shape=x_shape),
+        Dropout(0.5),
+        Conv1D(64, 3, activation='relu'),
+        MaxPooling1D(),
+        Conv1D(128, 3, activation='relu'),
+        MaxPooling1D(),
+        LSTM(64, return_sequences=True),
+        LSTM(128),
+        Dense(128),
+        Dropout(0.5),
+        Dense(1, activation='sigmoid') if classes < 3 else Dense(classes, activation='softmax')
+    ])
+    return model
+
+def deepram_conv1d_recurrent_embed(x_shape, classes=2):
+    model = keras.Sequential([
+        Input(shape=(x_shape)),
+        Embedding(x_shape, 256),
+        Dropout(0.5),
+        Conv1D(64, 3, activation='relu'),
+        MaxPooling1D(),
+        Conv1D(128, 3, activation='relu'),
+        MaxPooling1D(),
+        LSTM(64, return_sequences=True),
+        LSTM(128),
+        Dense(128),
+        Dropout(0.5),
+        Dense(1, activation='sigmoid') if classes < 3 else Dense(classes, activation='softmax')
+    ])
+    return model
+
+def deepram_recurrent_onehot(x_shape, classes=2):
+    model = keras.Sequential([
+        Input(shape=x_shape),
+        Dropout(0.5),
+        LSTM(64, return_sequences=True),
+        LSTM(128),
+        Dense(128),
+        Dropout(0.5),
+        Dense(1, activation='sigmoid') if classes < 3 else Dense(classes, activation='softmax')
+    ])
+    return model
+
+def deepram_recurrent_embed(x_shape, classes=2):
+    model = keras.Sequential([
+        Input(shape=(x_shape)),
+        Embedding(x_shape, 256),
+        Dropout(0.5),
+        LSTM(64, return_sequences=True),
+        LSTM(128),
+        Dense(128),
+        Dropout(0.5),
+        Dense(1, activation='sigmoid') if classes < 3 else Dense(classes, activation='softmax')
+    ])
+    return model
     
 models = {
     'cnn_nguyen_2_conv2d': cnn_nguyen_2_conv2d,
@@ -111,7 +221,14 @@ models = {
     'cnn_zeng_2_conv2d': cnn_zeng_2_conv2d,
     'cnn_zeng_3_conv2d': cnn_zeng_3_conv2d,
     'cnn_zeng_4_conv2d': cnn_zeng_4_conv2d,
-    'cnn_deepdbp': cnn_deepdbp
+    'cnn_zeng_4_conv2d_l2': cnn_zeng_4_conv2d_l2,
+    'cnn_deepdbp': cnn_deepdbp,
+    'deepram_conv1d_onehot': deepram_conv1d_onehot,
+    'deepram_conv1d_embed': deepram_conv1d_embed,
+    'deepram_conv1d_recurrent_onehot': deepram_conv1d_recurrent_onehot,
+    'deepram_conv1d_recurrent_embed': deepram_conv1d_recurrent_embed,
+    'deepram_recurrent_onehot': deepram_recurrent_onehot,
+    'deepram_recurrent_embed': deepram_recurrent_embed,
 }
 
 def evaluate(model, history, test_accuracy, y_score, y_true, log_dir, key, dataset, multi_class=False):
@@ -149,7 +266,7 @@ def evaluate(model, history, test_accuracy, y_score, y_true, log_dir, key, datas
                 'ovr': cls,
                 'precision': precision,
                 'recall': recall,
-                # 'thresholds': thresholds
+                'thresholds': np.append(thresholds, np.nan)
             })
             pr = pd.concat([pr, temp])
     else:
@@ -157,6 +274,6 @@ def evaluate(model, history, test_accuracy, y_score, y_true, log_dir, key, datas
         pr = pd.DataFrame({
             'precision': precision,
             'recall': recall,
-            # 'thresholds': thresholds
+            'thresholds': np.append(thresholds, np.nan)
         })
     pr.to_csv(log_dir + f'{key}-{dataset}-pr.csv', index=False)
