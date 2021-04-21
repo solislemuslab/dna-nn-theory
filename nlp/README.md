@@ -1,4 +1,5 @@
-# /nlp/CHIP
+# V1
+## /nlp/CHIP
 - baseline_chip_adam256_history.csv: baseline_chip_adam256_training.png
 - baseline_chip_sgd256_history.csv: baseline chip sgd256 training.png
 
@@ -11,7 +12,7 @@
 
 - doc2vec_chip_size30_history.csv: doc2vec_chip_prediction.png
 
-# /nlp/UCI
+## /nlp/UCI
 - baseline_uci_adam256_history.csv: baseline uci adam256 training.png
 - baseline_uci_sgd256_history.csv: baseline uci sgd256 training.png
 
@@ -36,7 +37,7 @@ doc2vec_uci_size30_val.csv
 all these 3: not included in overleaf
 
 
-# /nlp/viridae
+## /nlp/viridae
 - baseline_viridae_adam256_history.csv: baseline viridae adam256 training.png
 - baseline_viridae_sgd256_history.csv: baseline viridae sgd256 training.png
 - baseline_viridae(front)\_sgd256_history.csv: baseline_viridae(front)\_sgd256_training.png
@@ -84,3 +85,6 @@ doc2vec_viridae_tsne_size200_train.csv
 doc2vec_viridae_tsne_size50_test.csv
 doc2vec_viridae_tsne_size50_train.csv
 all these 8: doc2vec viridae tsne.png
+
+# V2
+
