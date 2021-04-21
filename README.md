@@ -10,6 +10,8 @@ Zhaoyi Zhang, Songyang Cheng, Claudia Solis-Lemus
 - splice.ipynb
 
 ### LSTM-layer
+#### v1
+/v1_scripts  
 - supervised_chip(256_adam)_save_embeddings.ipynb
 - supervised_chip(256_sgd)_save_embedding.ipynb
 - supervised_UCI_adam256_save_embedding.ipynb
@@ -20,29 +22,32 @@ Zhaoyi Zhang, Songyang Cheng, Claudia Solis-Lemus
 - supervised_viridae(mdl)_sgd256_save_embedding.ipynb
 - supervised_viridae(rear)_sgd256_save_embedding.ipynb
 
-
+#### v2
 - uci_baseline_adam256.ipynb
 - histone_lstm_layer_adam.ipynb
 - histone_lstm_layer_sgd.ipynb
 - discovery_baseline.py
-- 
 
 ### doc2vec+NN
+#### v1
+/v1_scripts 
 - doc2vec_chip_save_embedding.ipynb
 - doc2vec_UCI_save_embedding.ipynb
 - doc2vec_viridae_save_embedding.ipynb
-
-- uci_doc2vec_save embedding.ipynb
+#### v2
+- uci_doc2vec_save_embedding.ipynb
 - histone_doc2vec.ipynb
 - discovery_doc2vec.py
 
 ### LSTM-AE+NN
+#### v1
+/v1_scripts 
 - ae(1_layer)_chip_adam32_save_embedding.ipynb
 - ae(1_layer)_chip_adam256_save_embedding.ipynb
 - ae(1_layer)_chip_adam1024_save_embedding.ipynb
 - ae(1_layer)_UCI_save_embedding.ipynb
 - ae(1_layer)_viridae_save_embedding.ipynb
-
+#### v2
 - uci_ae_adam32.ipynb
 - uci_ae_adam256.ipynb
 - histone_ae_adam32.ipynb
