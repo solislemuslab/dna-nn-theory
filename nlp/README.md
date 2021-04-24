@@ -1,5 +1,6 @@
 # V1
-All scripts in this section for version 1 can be found in /v1_scrips.
+All scripts in this section for version 1 can be found in `./v1_scrips` and csv output files in `./v1_csv`.
+
 ## /nlp/CHIP
 - baseline_chip_adam256_history.csv: baseline_chip_adam256_training.png
 - baseline_chip_sgd256_history.csv: baseline chip sgd256 training.png
