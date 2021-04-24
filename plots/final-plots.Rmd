@@ -2445,6 +2445,362 @@ p3
 dev.off()
 ```
 
+### Plotting precision recall
+
+Splice:
+```{r}
+splice2 = read.table("../nlp/splice/uci_baseline_sgd256_test_pr.csv", header=TRUE, sep=",")
+splice2$model = "LSTM-layer"
+splice3 = read.table("../nlp/splice/uci_ae_adam1024_test_pr.csv", header=TRUE, sep=",")
+splice3$model = "LSTM-AE"
+splice4 = read.table("../nlp/splice/uci_doc2vec_size150_test_pr.csv", header=TRUE, sep=",")
+splice4$model = "doc2vec"
+
+splice2$X = NULL
+splice3$X = NULL
+splice4$X = NULL
+
+splice5 = read.table("../cn/results/cnn_nguyen_2_conv2d-splice-pr.csv", header=TRUE, sep=",")
+splice5$model = "CNN-Nguyen"
+splice6 = read.table("../cn/results/cnn_zeng_4_conv2d_l2-splice-pr.csv", header=TRUE, sep=",")
+splice6$model = "CNN-Zeng"
+splice7 = read.table("../cn/results/deepram_recurrent_embed-splice-pr.csv", header=TRUE, sep=",")
+splice7$model = "DeepRAM"
+splice8 = read.table("../cn/results/cnn_deepdbp-splice-pr.csv", header=TRUE, sep=",")
+splice8$model = "DeepDBP"
+
+splice = rbind(splice2, splice3, splice4, splice5, splice6, splice7, splice8)
+```
+
+Plotting Splice data:
+```{r}
+## Note that splice data has three levels, so ovr=0 means that one class is 0 and 1,2 are the other class
+p = ggplot(splice, aes(x=recall, y=precision, color=model)) +
+  geom_line(size=1) + facet_wrap(~as.factor(ovr)) +
+  ylim(c(0.5,1)) +
+  geom_hline(yintercept=0.5, linetype = "dashed") +
+  #scale_color_manual(values = cbp1) +
+  scale_color_brewer(palette="Dark2") +
+  xlab("Recall") + ylab("Precision") +
+  ggtitle("Splice data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(2.6)),
+    axis.title.x = element_text(size=rel(2.0)),
+    axis.title.y = element_text(size=rel(2.0), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(2.0), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(2.0), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), 
+    legend.title=element_blank(),
+    legend.position = "none",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pdf("splice-best-pr.pdf",height=7, width=13)
+p
+dev.off()
+```
+
+Histone:
+```{r}
+histone2 = read.table("../nlp/histone/baseline_histone_adam256_test_pr.csv", header=TRUE, sep=",")
+histone2$model = "LSTM-layer"
+histone3 = read.table("../nlp/histone/ae_histone_adam1024_test_pr.csv", header=TRUE, sep=",")
+histone3$model = "LSTM-AE"
+histone4 = read.table("../nlp/histone/doc2vec_histone_size50_test_pr.csv", header=TRUE, sep=",")
+histone4$model = "doc2vec"
+
+histone2$X = NULL
+histone3$X = NULL
+histone4$X = NULL
+
+histone5 = read.table("../cn/results/cnn_nguyen_conv1d_2_conv2d-histone-pr.csv", header=TRUE, sep=",")
+histone5$model = "CNN-Nguyen"
+histone6 = read.table("../cn/results/cnn_zeng_4_conv2d_l2-histone-pr.csv", header=TRUE, sep=",")
+histone6$model = "CNN-Zeng"
+histone7 = read.table("../cn/results/deepram_recurrent_onehot-histone-pr.csv", header=TRUE, sep=",")
+histone7$model = "DeepRAM"
+histone8 = read.table("../cn/results/cnn_deepdbp-histone-pr.csv", header=TRUE, sep=",")
+histone8$model = "DeepDBP"
+
+histone5$thresholds = NULL
+histone6$thresholds = NULL
+histone7$thresholds = NULL
+histone8$thresholds = NULL
+
+histone = rbind(histone2, histone3, histone4, histone5, histone6, histone7, histone8)
+```
+
+Plotting Histone data:
+```{r}
+p2 = ggplot(histone, aes(x=recall, y=precision, color=model)) +
+  geom_line(size=1) +
+  ylim(c(0.5,1)) +
+  geom_hline(yintercept=0.5, linetype = "dashed") +
+  #scale_color_manual(values = cbp1) +
+  scale_color_brewer(palette="Dark2") +
+  xlab("Recall") + ylab("Precision") +
+  ggtitle("Histone data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(2.8)),
+    axis.title.x = element_text(size=rel(2.2)),
+    axis.title.y = element_text(size=rel(2.2), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(2.2), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(2.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), 
+    legend.title=element_blank(),
+    legend.position = "none",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pdf("histone-best-pr.pdf",height=7, width=5.5)
+p2
+dev.off()
+```
+
+Motif:
+```{r}
+motif2 = read.table("../nlp/motif-discovery/discovery_baseline_adam256_test_pr.csv", header=TRUE, sep=",")
+motif2$model = "LSTM-layer"
+motif3 = read.table("../nlp/motif-discovery/discovery_ae_adam1024_test_pr.csv", header=TRUE, sep=",")
+motif3$model = "LSTM-AE"
+motif4 = read.table("../nlp/motif-discovery/discovery_doc2vec_size150test_pr.csv", header=TRUE, sep=",")
+motif4$model = "doc2vec"
+
+motif2$X = NULL
+motif3$X = NULL
+motif4$X = NULL
+
+motif5 = read.table("../cn/results/cnn_nguyen_conv1d_2_conv2d-motif_discovery-pr.csv", header=TRUE, sep=",")
+motif5$model = "CNN-Nguyen"
+motif6 = read.table("../cn/results/cnn_zeng_4_conv2d_l2-motif_discovery-pr.csv", header=TRUE, sep=",")
+motif6$model = "CNN-Zeng"
+motif7 = read.table("../cn/results/deepram_recurrent_onehot-motif_discovery-pr.csv", header=TRUE, sep=",")
+motif7$model = "DeepRAM"
+motif8 = read.table("../cn/results/cnn_deepdbp-motif_discovery-pr.csv", header=TRUE, sep=",")
+motif8$model = "DeepDBP"
+
+motif5$thresholds = NULL
+motif6$thresholds = NULL
+motif7$thresholds = NULL
+motif8$thresholds = NULL
+
+motif = rbind(motif2, motif3, motif4, motif5, motif6, motif7)
+
+## Motif data is very large, so we will randomly select rows to plot
+str(motif)
+n = length(motif$precision)
+k = floor(n/10)
+motif0 = motif[sample(nrow(motif), k), ]
+
+## there are only two rows in motif8
+motiff = rbind(motif0, motif8)
+```
+
+Plotting Motif data:
+```{r}
+p3 = ggplot(motiff, aes(x=recall, y=precision, color=model)) +
+  geom_line(size=1) +
+  ylim(c(0.5,1)) +
+  geom_hline(yintercept=0.5, linetype = "dashed") +
+  #scale_color_manual(values = cbp1) +
+  scale_color_brewer(palette="Dark2") +
+  xlab("Recall") + ylab("") +
+  ggtitle("Motif discovery data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(2.8)),
+    axis.title.x = element_text(size=rel(2.2)),
+    axis.title.y = element_text(size=rel(2.2), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(2.2), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(2.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.8)), 
+    legend.title=element_blank(),
+    #legend.position = "none",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pdf("motif-best-pr.pdf",height=7, width=9)
+p3
+dev.off()
+```
+
+### Plotting ROC
+
+Splice:
+```{r}
+splice2 = read.table("../nlp/splice/uci_baseline_sgd256_test_roc.csv", header=TRUE, sep=",")
+splice2$model = "LSTM-layer"
+splice3 = read.table("../nlp/splice/uci_ae_adam1024_test_roc.csv", header=TRUE, sep=",")
+splice3$model = "LSTM-AE"
+splice4 = read.table("../nlp/splice/uci_doc2vec_size150_test_roc.csv", header=TRUE, sep=",")
+splice4$model = "doc2vec"
+
+splice2$X = NULL
+splice3$X = NULL
+splice4$X = NULL
+
+splice5 = read.table("../cn/results/cnn_nguyen_2_conv2d-splice-roc.csv", header=TRUE, sep=",")
+splice5$model = "CNN-Nguyen"
+splice6 = read.table("../cn/results/cnn_zeng_4_conv2d_l2-splice-roc.csv", header=TRUE, sep=",")
+splice6$model = "CNN-Zeng"
+splice7 = read.table("../cn/results/deepram_recurrent_embed-splice-roc.csv", header=TRUE, sep=",")
+splice7$model = "DeepRAM"
+splice8 = read.table("../cn/results/cnn_deepdbp-splice-roc.csv", header=TRUE, sep=",")
+splice8$model = "DeepDBP"
+
+splice = rbind(splice2, splice3, splice4, splice5, splice6, splice7, splice8)
+```
+
+Plotting Splice data:
+```{r}
+## Note that splice data has three levels, so ovr=0 means that one class is 0 and 1,2 are the other class
+p = ggplot(splice, aes(x=fpr, y=tpr, color=model)) +
+  geom_line(size=1) + facet_wrap(~as.factor(ovr)) +
+  geom_abline(slope=1, linetype = "dashed") +
+  #scale_color_manual(values = cbp1) +
+  scale_color_brewer(palette="Dark2") +
+  xlab("False Positive Rate") + ylab("True Positive Rate") +
+  ggtitle("Splice data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(2.6)),
+    axis.title.x = element_text(size=rel(2.0)),
+    axis.title.y = element_text(size=rel(2.0), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(2.0), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(2.0), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), 
+    legend.title=element_blank(),
+    legend.position = "none",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pdf("splice-best-roc.pdf",height=7, width=13)
+p
+dev.off()
+```
+
+Histone:
+```{r}
+histone2 = read.table("../nlp/histone/baseline_histone_adam256_test_roc.csv", header=TRUE, sep=",")
+histone2$model = "LSTM-layer"
+histone3 = read.table("../nlp/histone/ae_histone_adam1024_test_roc.csv", header=TRUE, sep=",")
+histone3$model = "LSTM-AE"
+histone4 = read.table("../nlp/histone/doc2vec_histone_size50_test_roc.csv", header=TRUE, sep=",")
+histone4$model = "doc2vec"
+
+histone2$X = NULL
+histone3$X = NULL
+histone4$X = NULL
+
+histone5 = read.table("../cn/results/cnn_nguyen_conv1d_2_conv2d-histone-roc.csv", header=TRUE, sep=",")
+histone5$model = "CNN-Nguyen"
+histone6 = read.table("../cn/results/cnn_zeng_4_conv2d_l2-histone-roc.csv", header=TRUE, sep=",")
+histone6$model = "CNN-Zeng"
+histone7 = read.table("../cn/results/deepram_recurrent_onehot-histone-roc.csv", header=TRUE, sep=",")
+histone7$model = "DeepRAM"
+histone8 = read.table("../cn/results/cnn_deepdbp-histone-roc.csv", header=TRUE, sep=",")
+histone8$model = "DeepDBP"
+
+histone = rbind(histone2, histone3, histone4, histone5, histone6, histone7, histone8)
+```
+
+Plotting Histone data:
+```{r}
+p2 = ggplot(histone, aes(x=fpr, y=tpr, color=model)) +
+  geom_line(size=1) +
+  geom_abline(slope=1, linetype = "dashed") +
+  #scale_color_manual(values = cbp1) +
+  scale_color_brewer(palette="Dark2") +
+  xlab("False Positive Rate") + ylab("True Positive Rate") +
+  ggtitle("Histone data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(2.8)),
+    axis.title.x = element_text(size=rel(2.2)),
+    axis.title.y = element_text(size=rel(2.2), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(2.2), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(2.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), 
+    legend.title=element_blank(),
+    legend.position = "none",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pdf("histone-best-roc.pdf",height=7, width=5.5)
+p2
+dev.off()
+```
+
+Motif:
+```{r}
+motif2 = read.table("../nlp/motif-discovery/discovery_baseline_adam256_test_roc.csv", header=TRUE, sep=",")
+motif2$model = "LSTM-layer"
+motif3 = read.table("../nlp/motif-discovery/discovery_ae_adam1024_test_roc.csv", header=TRUE, sep=",")
+motif3$model = "LSTM-AE"
+motif4 = read.table("../nlp/motif-discovery/discovery_doc2vec_size150test_roc.csv", header=TRUE, sep=",")
+motif4$model = "doc2vec"
+
+motif2$X = NULL
+motif3$X = NULL
+motif4$X = NULL
+
+motif5 = read.table("../cn/results/cnn_nguyen_conv1d_2_conv2d-motif_discovery-roc.csv", header=TRUE, sep=",")
+motif5$model = "CNN-Nguyen"
+motif6 = read.table("../cn/results/cnn_zeng_4_conv2d_l2-motif_discovery-roc.csv", header=TRUE, sep=",")
+motif6$model = "CNN-Zeng"
+motif7 = read.table("../cn/results/deepram_recurrent_onehot-motif_discovery-roc.csv", header=TRUE, sep=",")
+motif7$model = "DeepRAM"
+motif8 = read.table("../cn/results/cnn_deepdbp-motif_discovery-roc.csv", header=TRUE, sep=",")
+motif8$model = "DeepDBP"
+
+
+motif = rbind(motif2, motif3, motif4, motif5, motif6, motif7)
+
+## Motif data is very large, so we will randomly select rows to plot
+str(motif)
+n = length(motif$fpr)
+k = floor(n/10)
+motif0 = motif[sample(nrow(motif), k), ]
+
+## there are only two rows in motif8
+motiff = rbind(motif0, motif8)
+```
+
+Plotting Motif data:
+```{r}
+p3 = ggplot(motiff, aes(x=fpr, y=tpr, color=model)) +
+  geom_line(size=1) +
+  geom_abline(slope=1, linetype = "dashed") +
+  #scale_color_manual(values = cbp1) +
+  scale_color_brewer(palette="Dark2") +
+  xlab("False Positive Rate") + ylab("") +
+  ggtitle("Motif discovery data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(2.8)),
+    axis.title.x = element_text(size=rel(2.2)),
+    axis.title.y = element_text(size=rel(2.2), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(2.2), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(2.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(2.0)), 
+    legend.title=element_blank(),
+    #legend.position = "none",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pdf("motif-best-roc.pdf",height=7, width=9)
+p3
+dev.off()
+```
+
 # Appendix
 
 ## The effect of regularization
