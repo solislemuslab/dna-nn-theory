@@ -958,6 +958,7 @@ discovery3$model = rep(c("SGD", "ADAM"),3)
 
 Plots Splice data:
 ```{r}
+splice3 = within(splice3, type <- factor(type))
 splice4 = within(splice3, type<-factor(type, labels=c("testing", "training", "validating")))
 splice4 = within(splice4, type<-factor(type, levels=c("training", "validating", "testing")))
 
@@ -1922,6 +1923,528 @@ p3
 dev.off()
 ```
 
+## The role of batch size
+
+### Plotting precision recall
+
+Reading data:
+```{r}
+splice1 = read.table("../nlp/splice/uci_ae_adam32_test_pr.csv", header=TRUE, sep=",")
+splice1$model = "LSTM-AE-size32"
+
+splice2 = read.table("../nlp/splice/uci_ae_adam256_test_pr.csv", header=TRUE, sep=",")
+splice2$model = "LSTM-AE-size256"
+
+splice3 = read.table("../nlp/splice/uci_ae_adam1024_test_pr.csv", header=TRUE, sep=",")
+splice3$model = "LSTM-AE-size1024"
+
+splice=rbind(splice1,splice2,splice3)
+
+
+histone1 = read.table("../nlp/histone/ae_histone_adam32_test_pr.csv", header=TRUE, sep=",")
+histone1$model = "LSTM-AE-size32"
+
+histone2 = read.table("../nlp/histone/ae_histone_adam256_test_pr.csv", header=TRUE, sep=",")
+histone2$model = "LSTM-AE-size256"
+
+histone3 = read.table("../nlp/histone/ae_histone_adam1024_test_pr.csv", header=TRUE, sep=",")
+histone3$model = "LSTM-AE-size1024"
+
+histone=rbind(histone1,histone2, histone3)
+
+
+
+motif1 = read.table("../nlp/motif-discovery/discovery_ae_adam32_test_pr.csv", header=TRUE, sep=",")
+motif1$model = "LSTM-AE-size32"
+
+motif2 = read.table("../nlp/motif-discovery/discovery_ae_adam256_test_pr.csv", header=TRUE, sep=",")
+motif2$model = "LSTM-AE-size256"
+
+motif3 = read.table("../nlp/motif-discovery/discovery_ae_adam1024_test_pr.csv", header=TRUE, sep=",")
+motif3$model = "LSTM-AE-size1024"
+
+motif=rbind(motif1,motif2, motif3)
+
+str(splice)
+str(histone)
+str(motif)
+```
+
+Plotting Splice data:
+```{r}
+## Note that splice data has three levels, so ovr=0 means that one class is 0 and 1,2 are the other class
+splice = within(splice, model<-factor(model))
+splice = within(splice, model<- factor(model, levels=c("LSTM-AE-size32", "LSTM-AE-size256", "LSTM-AE-size1024")))
+
+p = ggplot(splice, aes(x=recall, y=precision, color=model)) +
+  geom_line(size=1) + facet_wrap(~as.factor(ovr)) +
+  ylim(c(0.5,1)) +
+  geom_hline(yintercept=0.5, linetype = "dashed") +
+  #scale_color_manual(values = cbp1) +
+  scale_color_brewer(palette="YlGnBu") +
+  xlab("Recall") + ylab("Precision") +
+  ggtitle("Splice data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(2.6)),
+    axis.title.x = element_text(size=rel(2.0)),
+    axis.title.y = element_text(size=rel(2.0), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(2.0), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(2.0), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), 
+    legend.title=element_blank(),
+    legend.position = "none",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pdf("splice-batch-size-pr.pdf",height=7, width=13)
+p
+dev.off()
+```
+
+Plotting Histone data:
+```{r}
+histone = within(histone, model<-factor(model))
+histone = within(histone, model<- factor(model, levels=c("LSTM-AE-size32", "LSTM-AE-size256", "LSTM-AE-size1024")))
+
+p2 = ggplot(histone, aes(x=recall, y=precision, color=model)) +
+  geom_line(size=1) +
+  ylim(c(0.5,1)) +
+  geom_hline(yintercept=0.5, linetype = "dashed") +
+  #scale_color_manual(values = cbp1) +
+  scale_color_brewer(palette="YlGnBu") +
+  xlab("Recall") + ylab("Precision") +
+  ggtitle("Histone data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(2.8)),
+    axis.title.x = element_text(size=rel(2.2)),
+    axis.title.y = element_text(size=rel(2.2), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(2.2), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(2.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), 
+    legend.title=element_blank(),
+    legend.position = "none",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pdf("histone-batch-size-pr.pdf",height=7, width=5.5)
+p2
+dev.off()
+```
+
+Plotting Motif data:
+```{r}
+## Motif data is very large, so we will randomly select rows to plot
+str(motif)
+n = length(motif$precision)
+k = floor(n/10)
+motif2 = motif[sample(nrow(motif), k), ]
+
+motif3 = within(motif2, model<-factor(model))
+motif3 = within(motif3, model<- factor(model, levels=c("LSTM-AE-size32", "LSTM-AE-size256", "LSTM-AE-size1024")))
+
+p3 = ggplot(motif3, aes(x=recall, y=precision, color=model)) +
+  geom_line(size=1) +
+  ylim(c(0.5,1)) +
+  geom_hline(yintercept=0.5, linetype = "dashed") +
+  #scale_color_manual(values = cbp1) +
+  scale_color_brewer(palette="YlGnBu") +
+  xlab("Recall") + ylab("") +
+  ggtitle("Motif discovery data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(2.8)),
+    axis.title.x = element_text(size=rel(2.2)),
+    axis.title.y = element_text(size=rel(2.2), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(2.2), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(2.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.8)), 
+    legend.title=element_blank(),
+    #legend.position = "none",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pdf("motif-batch-size-pr.pdf",height=7, width=9)
+p3
+dev.off()
+```
+
+### Plotting ROC
+
+Reading data:
+```{r}
+splice1 = read.table("../nlp/splice/uci_ae_adam32_test_roc.csv", header=TRUE, sep=",")
+splice1$model = "LSTM-AE-size32"
+
+splice2 = read.table("../nlp/splice/uci_ae_adam256_test_roc.csv", header=TRUE, sep=",")
+splice2$model = "LSTM-AE-size256"
+
+splice3 = read.table("../nlp/splice/uci_ae_adam1024_test_roc.csv", header=TRUE, sep=",")
+splice3$model = "LSTM-AE-size1024"
+
+splice=rbind(splice1,splice2,splice3)
+
+
+histone1 = read.table("../nlp/histone/ae_histone_adam32_test_roc.csv", header=TRUE, sep=",")
+histone1$model = "LSTM-AE-size32"
+
+histone2 = read.table("../nlp/histone/ae_histone_adam256_test_roc.csv", header=TRUE, sep=",")
+histone2$model = "LSTM-AE-size256"
+
+histone3 = read.table("../nlp/histone/ae_histone_adam1024_test_roc.csv", header=TRUE, sep=",")
+histone3$model = "LSTM-AE-size1024"
+
+histone=rbind(histone1,histone2, histone3)
+
+
+
+motif1 = read.table("../nlp/motif-discovery/discovery_ae_adam32_test_roc.csv", header=TRUE, sep=",")
+motif1$model = "LSTM-AE-size32"
+
+motif2 = read.table("../nlp/motif-discovery/discovery_ae_adam256_test_roc.csv", header=TRUE, sep=",")
+motif2$model = "LSTM-AE-size256"
+
+motif3 = read.table("../nlp/motif-discovery/discovery_ae_adam1024_test_roc.csv", header=TRUE, sep=",")
+motif3$model = "LSTM-AE-size1024"
+
+motif=rbind(motif1,motif2, motif3)
+
+str(splice)
+str(histone)
+str(motif)
+```
+
+Plotting Splice data:
+```{r}
+## Note that splice data has three levels, so ovr=0 means that one class is 0 and 1,2 are the other class
+splice = within(splice, model<-factor(model))
+splice = within(splice, model<- factor(model, levels=c("LSTM-AE-size32", "LSTM-AE-size256", "LSTM-AE-size1024")))
+
+p = ggplot(splice, aes(x=fpr, y=tpr, color=model)) +
+  geom_line(size=1) + facet_wrap(~as.factor(ovr)) +
+  geom_abline(slope=1, linetype = "dashed") +
+  #scale_color_manual(values = cbp1) +
+  scale_color_brewer(palette="YlGnBu") +
+  xlab("False Positive Rate") + ylab("True Positive Rate") +
+  ggtitle("Splice data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(2.6)),
+    axis.title.x = element_text(size=rel(2.0)),
+    axis.title.y = element_text(size=rel(2.0), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(2.0), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(2.0), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), 
+    legend.title=element_blank(),
+    legend.position = "none",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pdf("splice-batch-size-roc.pdf",height=7, width=13)
+p
+dev.off()
+```
+
+Plotting Histone data:
+```{r}
+
+histone = within(histone, model<-factor(model))
+histone = within(histone, model<- factor(model, levels=c("LSTM-AE-size32", "LSTM-AE-size256", "LSTM-AE-size1024")))
+
+p2 = ggplot(histone, aes(x=fpr, y=tpr, color=model)) +
+  geom_line(size=1) +
+  geom_abline(slope=1, linetype = "dashed") +
+  #scale_color_manual(values = cbp1) +
+  scale_color_brewer(palette="YlGnBu") +
+  xlab("False Positive Rate") + ylab("True Positive Rate") +
+  ggtitle("Histone data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(2.8)),
+    axis.title.x = element_text(size=rel(2.2)),
+    axis.title.y = element_text(size=rel(2.2), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(2.2), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(2.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(1.2)), 
+    legend.title=element_blank(),
+    legend.position = "none",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pdf("histone-batch-size-roc.pdf",height=7, width=5.5)
+p2
+dev.off()
+```
+
+Plotting Motif data:
+```{r}
+## Motif data is very large, so we will randomly select rows to plot
+str(motif)
+n = length(motif$fpr)
+k = floor(n/10)
+motif2 = motif[sample(nrow(motif), k), ]
+
+motif3 = within(motif2, model<-factor(model))
+motif3 = within(motif3, model<- factor(model, levels=c("LSTM-AE-size32", "LSTM-AE-size256", "LSTM-AE-size1024")))
+
+p3 = ggplot(motif3, aes(x=fpr, y=tpr, color=model)) +
+  geom_line(size=1) +
+  geom_abline(slope=1, linetype = "dashed") +
+  #scale_color_manual(values = cbp1) +
+  scale_color_brewer(palette="YlGnBu") +
+  xlab("False Positive Rate") + ylab("") +
+  ggtitle("Motif discovery data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(2.8)),
+    axis.title.x = element_text(size=rel(2.2)),
+    axis.title.y = element_text(size=rel(2.2), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(2.2), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(2.2), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(2.0)), 
+    legend.title=element_blank(),
+    #legend.position = "none",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pdf("motif-batch-size-roc.pdf",height=7, width=9)
+p3
+dev.off()
+```
+
+
+## Overall comparison
+Comparing the best models.
+
+### Plotting accuracy
+Reading results for all models for splice data:
+```{r}
+## NLP models
+nlp = read.table("../nlp/dataset-evaluation.csv", header=TRUE, sep=",")
+str(nlp)
+nlp2 = subset(nlp, select = c("X","train_acc","val_acc","test_acc"))
+str(nlp2)
+
+splice = nlp2[grep("splice", nlp2$X),]
+lstmlayer = subset(splice, test_acc == max(splice[grep("baseline",splice$X),]$test_acc))
+lstmae = subset(splice, test_acc == max(splice[grep("ae",splice$X),]$test_acc))
+doc2vec = subset(splice, test_acc == max(splice[grep("doc2vec",splice$X),]$test_acc))
+
+## CNN models
+cnn = read.table("../cn/data-evaluation.csv", header=TRUE, sep=",")
+str(cnn)
+
+splice = subset(cnn,data=="splice")
+nguyen = subset(splice, test_accuracy == max(splice[grep("nguyen",splice$model),]$test_accuracy))
+zeng = subset(splice, test_accuracy == max(splice[grep("zeng",splice$model),]$test_accuracy))
+deepram = subset(splice, test_accuracy == max(splice[grep("deepram",splice$model),]$test_accuracy))
+deepdbp = subset(splice, test_accuracy == max(splice[grep("deepdbp",splice$model),]$test_accuracy))
+
+nguyen$data = NULL
+zeng$data = NULL
+deepram$data = NULL
+deepdbp$data = NULL
+
+splice.cnn = rbind(nguyen, zeng, deepram, deepdbp)
+splice.nlp = rbind(lstmlayer, lstmae, doc2vec)
+names(splice.nlp) = c("model", "accuracy", "val_accuracy", "test_accuracy")
+
+splice = rbind(splice.nlp, splice.cnn)
+splice$model = NULL
+splice2 = gather(splice, "type", "acc")
+splice2$model = rep(c("LSTM-layer", "LSTM-AE", "doc2vec", "CNN-Nguyen", "CNN-Zeng", "DeepRAM", "DeepDBP"),3)
+```
+
+Plots Splice data:
+```{r}
+splice2 = within(splice2, type <- factor(type))
+splice2 = within(splice2, type<-factor(type, labels=c("training", "testing", "validating")))
+splice2 = within(splice2, type<-factor(type, levels=c("training", "validating", "testing")))
+
+p = ggplot(splice2, aes(x=model, y=acc, fill=type)) +
+  geom_bar(position="dodge", stat="identity") +
+  scale_y_continuous(limits=c(0.5,1),oob = rescale_none) +
+  #scale_fill_manual(values = cbp1)
+  #scale_fill_viridis(discrete=TRUE)
+  #scale_fill_brewer(palette="PuBu")
+  scale_fill_brewer(palette="Blues") +
+  xlab("") + ylab("") +
+  ggtitle("Splice data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(3.8)),
+    axis.title.x = element_text(size=rel(3.0)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey49", size=rel(3.0), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey49", size=rel(2.6), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(2.6)), 
+    legend.title=element_blank(),
+    legend.position = "bottom",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pdf("splice-best-acc.pdf",height=12, width=9)
+p
+dev.off()
+```
+
+Reading results for all models for histone data:
+```{r}
+## NLP models
+nlp = read.table("../nlp/dataset-evaluation.csv", header=TRUE, sep=",")
+str(nlp)
+nlp2 = subset(nlp, select = c("X","train_acc","val_acc","test_acc"))
+str(nlp2)
+
+histone = nlp2[grep("histone", nlp2$X),]
+lstmlayer = subset(histone, test_acc == max(histone[grep("baseline",histone$X),]$test_acc))
+lstmae = subset(histone, test_acc == max(histone[grep("ae",histone$X),]$test_acc))
+doc2vec = subset(histone, test_acc == max(histone[grep("doc2vec",histone$X),]$test_acc))
+
+## CNN models
+cnn = read.table("../cn/data-evaluation.csv", header=TRUE, sep=",")
+str(cnn)
+
+histone = subset(cnn,data=="histone")
+
+nguyen0 = histone[grep("nguyen",histone$model),]
+nguyen = subset(nguyen0, test_accuracy == max(nguyen0$test_accuracy))
+zeng0 = histone[grep("zeng",histone$model),]
+zeng = subset(zeng0, test_accuracy == max(zeng0$test_accuracy))
+deepram = subset(histone, test_accuracy == max(histone[grep("deepram",histone$model),]$test_accuracy))
+deepdbp = subset(histone, test_accuracy == max(histone[grep("deepdbp",histone$model),]$test_accuracy))
+
+nguyen$data = NULL
+zeng$data = NULL
+deepram$data = NULL
+deepdbp$data = NULL
+
+histone.cnn = rbind(nguyen, zeng, deepram, deepdbp)
+histone.nlp = rbind(lstmlayer, lstmae, doc2vec)
+names(histone.nlp) = c("model", "accuracy", "val_accuracy", "test_accuracy")
+
+histone = rbind(histone.nlp, histone.cnn)
+histone$model = NULL
+histone2 = gather(histone, "type", "acc")
+histone2$model = rep(c("LSTM-layer", "LSTM-AE", "doc2vec", "CNN-Nguyen", "CNN-Zeng", "DeepRAM", "DeepDBP"),3)
+```
+
+Plots Histone data:
+```{r}
+histone2 = within(histone2, type<-factor(type, labels=c("training", "testing", "validating")))
+histone2 = within(histone2, type<-factor(type, levels=c("training", "validating", "testing")))
+
+p2 = ggplot(histone2, aes(x=model, y=acc, fill=type)) +
+  geom_bar(position="dodge", stat="identity") +
+  scale_y_continuous(limits=c(0.5,1),oob = rescale_none) +
+  #scale_fill_manual(values = cbp1)
+  #scale_fill_viridis(discrete=TRUE)
+  #scale_fill_brewer(palette="PuBu")
+  scale_fill_brewer(palette="Blues") +
+  xlab("") + ylab("") +
+  ggtitle("Histone data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(3.8)),
+    axis.title.x = element_text(size=rel(3.0)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey49", size=rel(3.0), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey49", size=rel(2.6), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(2.6)), 
+    legend.title=element_blank(),
+    legend.position = "bottom",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pdf("histone-best-acc.pdf",height=12, width=9)
+p2
+dev.off()
+```
+
+Reading results for all models for motif data:
+```{r}
+## NLP models
+nlp = read.table("../nlp/dataset-evaluation.csv", header=TRUE, sep=",")
+str(nlp)
+nlp2 = subset(nlp, select = c("X","train_acc","val_acc","test_acc"))
+str(nlp2)
+
+motif = nlp2[grep("discovery", nlp2$X),]
+lstmlayer = subset(motif, test_acc == max(motif[grep("baseline",motif$X),]$test_acc))
+lstmae = subset(motif, test_acc == max(motif[grep("ae",motif$X),]$test_acc))
+doc2vec = subset(motif, test_acc == max(motif[grep("doc2vec",motif$X),]$test_acc))
+
+## CNN models
+cnn = read.table("../cn/data-evaluation.csv", header=TRUE, sep=",")
+str(cnn)
+
+motif = subset(cnn,data=="motif_discovery")
+
+nguyen0 = motif[grep("nguyen",motif$model),]
+nguyen = subset(nguyen0, test_accuracy == max(nguyen0$test_accuracy))
+zeng0 = motif[grep("zeng",motif$model),]
+zeng = subset(zeng0, test_accuracy == max(zeng0$test_accuracy))
+deepram = subset(motif, test_accuracy == max(motif[grep("deepram",motif$model),]$test_accuracy))
+deepdbp = subset(motif, test_accuracy == max(motif[grep("deepdbp",motif$model),]$test_accuracy))
+
+nguyen$data = NULL
+zeng$data = NULL
+deepram$data = NULL
+deepdbp$data = NULL
+
+motif.cnn = rbind(nguyen, zeng, deepram, deepdbp)
+motif.nlp = rbind(lstmlayer, lstmae, doc2vec)
+names(motif.nlp) = c("model", "accuracy", "val_accuracy", "test_accuracy")
+
+motif = rbind(motif.nlp, motif.cnn)
+motif$model = NULL
+motif2 = gather(motif, "type", "acc")
+motif2$model = rep(c("LSTM-layer", "LSTM-AE", "doc2vec", "CNN-Nguyen", "CNN-Zeng", "DeepRAM", "DeepDBP"),3)
+```
+
+Plots Motif data:
+```{r}
+motif2 = within(motif2, type<-factor(type, labels=c("training", "testing", "validating")))
+motif2 = within(motif2, type<-factor(type, levels=c("training", "validating", "testing")))
+
+
+p3 = ggplot(motif2, aes(x=model, y=acc, fill=type)) +
+  geom_bar(position="dodge", stat="identity") +
+  scale_y_continuous(limits=c(0.5,1),oob = rescale_none) +
+  #scale_fill_manual(values = cbp1)
+  #scale_fill_viridis(discrete=TRUE)
+  #scale_fill_brewer(palette="PuBu")
+  scale_fill_brewer(palette="Blues") +
+  xlab("") + ylab("") +
+  ggtitle("Motif discovery data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(3.8)),
+    axis.title.x = element_text(size=rel(3.0)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey49", size=rel(3.0), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey49", size=rel(2.6), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(2.6)), 
+    legend.title=element_blank(),
+    legend.position = "bottom",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pdf("motif-best-acc.pdf",height=12, width=9)
+p3
+dev.off()
+```
+
 # Appendix
 
 ## The effect of regularization
@@ -2754,19 +3277,22 @@ histone=rbind(histone50, histone100, histone150, histone200)
 motif50 = read.table("../nlp/motif-discovery/discovery_doc2vec_size50_history.csv", header=TRUE, sep=",")
 motif100 = read.table("../nlp/motif-discovery/discovery_doc2vec_size100_history.csv", header=TRUE, sep=",")
 motif150 = read.table("../nlp/motif-discovery/discovery_doc2vec_size150_history.csv", header=TRUE, sep=",")
-#motif200 = read.table("../nlp/motif-discovery/discovery_doc2vec_size200_history.csv", header=TRUE, sep=",")
+motif200 = read.table("../nlp/motif-discovery/discovery_doc2vec_size200_history.csv", header=TRUE, sep=",")
 
 motif50$model = "doc2vec-size50"
 motif100$model = "doc2vec-size100"
 motif150$model = "doc2vec-size150"
-#motif200$model = "doc2vec-size200"
+motif200$model = "doc2vec-size200"
 
-motif=rbind(motif50, motif100, motif150)
+motif=rbind(motif50, motif100, motif150, motif200)
 ```
 
 Plotting Splice data:
 ```{r}
-p = ggplot(splice, aes(x=epoch,y=accuracy, color=model))+
+splice = within(splice, model<-factor(model))
+splice = within(splice, model<- factor(model, levels=c("doc2vec-size50", "doc2vec-size100", "doc2vec-size150", "doc2vec-size200")))
+
+p = ggplot(splice, aes(x=X,y=accuracy, color=model))+
   geom_line(size=1) + geom_line(aes(y=val_accuracy,color=model), linetype="dotted", size=1)+
     scale_color_brewer(palette="YlGnBu") +
   xlab("Epoch") + ylab("Accuracy") +
@@ -2785,7 +3311,7 @@ p = ggplot(splice, aes(x=epoch,y=accuracy, color=model))+
     strip.text = element_text(size = 17)
   )
 
-pl = ggplot(splice, aes(x=epoch,y=loss, color=model))+
+pl = ggplot(splice, aes(x=X,y=loss, color=model))+
   geom_line(size=1) + geom_line(aes(y=val_loss,color=model), linetype="dotted", size=1)+
     scale_color_brewer(palette="YlGnBu") +
   xlab("Epoch") + ylab("Loss") +
@@ -2804,18 +3330,22 @@ pl = ggplot(splice, aes(x=epoch,y=loss, color=model))+
     strip.text = element_text(size = 17)
   )
 
-pdf("splice-embedding-dynamics.pdf",height=6, width=7)
+pdf("splice-embed-size-dynamics.pdf",height=6, width=7)
 p
 dev.off()
 
-pdf("splice-embedding-dynamics-loss.pdf",height=6, width=7)
+pdf("splice-embed-size-dynamics-loss.pdf",height=6, width=7)
 pl
 dev.off()
 ```
 
 Plotting Histone data:
 ```{r}
-p2 = ggplot(histone, aes(x=epoch,y=accuracy, color=model))+
+histone = within(histone, model<-factor(model))
+histone = within(histone, model<- factor(model, levels=c("doc2vec-size50", "doc2vec-size100", "doc2vec-size150", "doc2vec-size200")))
+
+
+p2 = ggplot(histone, aes(x=X,y=accuracy, color=model))+
   geom_line(size=1) + geom_line(aes(y=val_accuracy,color=model), linetype="dotted", size=1)+
     scale_color_brewer(palette="YlGnBu") +
   xlab("Epoch") + ylab("Accuracy") +
@@ -2834,7 +3364,7 @@ p2 = ggplot(histone, aes(x=epoch,y=accuracy, color=model))+
     strip.text = element_text(size = 17)
   )
 
-pl2 = ggplot(histone, aes(x=epoch,y=loss, color=model))+
+pl2 = ggplot(histone, aes(x=X,y=loss, color=model))+
   geom_line(size=1) + geom_line(aes(y=val_loss,color=model), linetype="dotted", size=1)+
     scale_color_brewer(palette="YlGnBu") +
   xlab("Epoch") + ylab("Loss") +
@@ -2853,18 +3383,22 @@ pl2 = ggplot(histone, aes(x=epoch,y=loss, color=model))+
     strip.text = element_text(size = 17)
   )
 
-pdf("histone-embedding-dynamics.pdf",height=6, width=7)
+pdf("histone-embed-size-dynamics.pdf",height=6, width=7)
 p2
 dev.off()
 
-pdf("histone-embedding-dynamics-loss.pdf",height=6, width=7)
+pdf("histone-embed-size-dynamics-loss.pdf",height=6, width=7)
 pl2
 dev.off()
 ```
 
 Plotting Motif data:
 ```{r}
-p3 = ggplot(motif, aes(x=epoch,y=accuracy, color=model))+
+motif = within(motif, model<-factor(model))
+motif = within(motif, model<- factor(model, levels=c("doc2vec-size50", "doc2vec-size100", "doc2vec-size150", "doc2vec-size200")))
+
+
+p3 = ggplot(motif, aes(x=X,y=accuracy, color=model))+
   geom_line(size=1) + geom_line(aes(y=val_accuracy,color=model), linetype="dotted", size=1)+
     scale_color_brewer(palette="YlGnBu") +
   xlab("Epoch") + ylab("Accuracy") +
@@ -2883,7 +3417,7 @@ p3 = ggplot(motif, aes(x=epoch,y=accuracy, color=model))+
     strip.text = element_text(size = 17)
   )
 
-pl3 = ggplot(motif, aes(x=epoch,y=loss, color=model))+
+pl3 = ggplot(motif, aes(x=X,y=loss, color=model))+
   geom_line(size=1) + geom_line(aes(y=val_loss,color=model), linetype="dotted", size=1)+
     scale_color_brewer(palette="YlGnBu") +
   xlab("Epoch") + ylab("Loss") +
@@ -2902,14 +3436,210 @@ pl3 = ggplot(motif, aes(x=epoch,y=loss, color=model))+
     strip.text = element_text(size = 17)
   )
 
-pdf("motif-embedding-dynamics.pdf",height=6, width=7)
+pdf("motif-embed-size-dynamics.pdf",height=6, width=7)
 p3
 dev.off()
 
-pdf("motif-embedding-dynamics-loss.pdf",height=6, width=7)
+pdf("motif-embed-size-dynamics-loss.pdf",height=6, width=7)
 pl3
 dev.off()
 ```
+
+
+### Role of batch size
+
+Reading data:
+```{r}
+## splice
+splice32 = read.table("../nlp/splice/uci_ae_adam32_reconstruction_history.csv", header=TRUE, sep=",")
+splice256 = read.table("../nlp/splice/uci_ae_adam256_reconstruction_history.csv", header=TRUE, sep=",")
+splice1024 = read.table("../nlp/splice/uci_ae_adam1024_reconstruction_history.csv", header=TRUE, sep=",")
+
+splice32$model = "LSTM-AE-size32"
+splice256$model = "LSTM-AE-size256"
+splice1024$model = "LSTM-AE-size1024"
+splice=rbind(splice32, splice256, splice1024)
+
+
+## histone
+histone32 = read.table("../nlp/histone/ae_histone_adam32_reconstruction_history.csv", header=TRUE, sep=",")
+histone256 = read.table("../nlp/histone/ae_histone_adam256_reconstruction_history.csv", header=TRUE, sep=",")
+histone1024 = read.table("../nlp/histone/ae_histone_adam1024_reconstruction_history.csv", header=TRUE, sep=",")
+
+histone32$model = "LSTM-AE-size32"
+histone256$model = "LSTM-AE-size256"
+histone1024$model = "LSTM-AE-size1024"
+histone=rbind(histone32, histone256, histone1024)
+
+## motif
+motif32 = read.table("../nlp/motif-discovery/discovery_ae_adam32__reconstruction_history.csv", header=TRUE, sep=",")
+motif256 = read.table("../nlp/motif-discovery/discovery_ae_adam256__reconstruction_history.csv", header=TRUE, sep=",")
+motif1024 = read.table("../nlp/motif-discovery/discovery_ae_adam1024__reconstruction_history.csv", header=TRUE, sep=",")
+
+motif32$model = "LSTM-AE-size32"
+motif256$model = "LSTM-AE-size256"
+motif1024$model = "LSTM-AE-size1024"
+motif=rbind(motif32, motif256, motif1024)
+```
+
+Plotting Splice data:
+```{r}
+splice = within(splice, model<-factor(model))
+splice = within(splice, model<- factor(model, levels=c("LSTM-AE-size32", "LSTM-AE-size256", "LSTM-AE-size1024")))
+
+p = ggplot(splice, aes(x=X,y=accuracy, color=model))+
+  geom_line(size=1) + geom_line(aes(y=val_accuracy,color=model), linetype="dotted", size=1)+
+    scale_color_brewer(palette="YlGnBu") +
+  xlab("Epoch") + ylab("Accuracy") +
+  ggtitle("Splice data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.5), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.4), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(0.8)), 
+    legend.title=element_blank(),
+    legend.position = "bottom",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pl = ggplot(splice, aes(x=X,y=loss, color=model))+
+  geom_line(size=1) + geom_line(aes(y=val_loss,color=model), linetype="dotted", size=1)+
+    scale_color_brewer(palette="YlGnBu") +
+  xlab("Epoch") + ylab("Loss") +
+  ggtitle("Splice data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.5), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.4), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(0.8)), 
+    legend.title=element_blank(),
+    legend.position = "bottom",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pdf("splice-batch-size-dynamics.pdf",height=6, width=7)
+p
+dev.off()
+
+pdf("splice-batch-size-dynamics-loss.pdf",height=6, width=7)
+pl
+dev.off()
+```
+
+Plotting Histone data:
+```{r}
+histone = within(histone, model<-factor(model))
+histone = within(histone, model<- factor(model, levels=c("LSTM-AE-size32", "LSTM-AE-size256", "LSTM-AE-size1024")))
+
+
+p2 = ggplot(histone, aes(x=X,y=accuracy, color=model))+
+  geom_line(size=1) + geom_line(aes(y=val_accuracy,color=model), linetype="dotted", size=1)+
+    scale_color_brewer(palette="YlGnBu") +
+  xlab("Epoch") + ylab("Accuracy") +
+  ggtitle("Histone data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.5), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.4), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(0.8)), 
+    legend.title=element_blank(),
+    legend.position = "bottom",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pl2 = ggplot(histone, aes(x=X,y=loss, color=model))+
+  geom_line(size=1) + geom_line(aes(y=val_loss,color=model), linetype="dotted", size=1)+
+    scale_color_brewer(palette="YlGnBu") +
+  xlab("Epoch") + ylab("Loss") +
+  ggtitle("Histone data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.5), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.4), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(0.8)), 
+    legend.title=element_blank(),
+    legend.position = "bottom",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pdf("histone-batch-size-dynamics.pdf",height=6, width=7)
+p2
+dev.off()
+
+pdf("histone-batch-size-dynamics-loss.pdf",height=6, width=7)
+pl2
+dev.off()
+```
+
+Plotting Motif data:
+```{r}
+motif = within(motif, model<-factor(model))
+motif = within(motif, model<- factor(model, levels=c("LSTM-AE-size32", "LSTM-AE-size256", "LSTM-AE-size1024")))
+
+
+p3 = ggplot(motif, aes(x=X,y=accuracy, color=model))+
+  geom_line(size=1) + geom_line(aes(y=val_accuracy,color=model), linetype="dotted", size=1)+
+    scale_color_brewer(palette="YlGnBu") +
+  xlab("Epoch") + ylab("Accuracy") +
+  ggtitle("Motif discovery data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.5), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.4), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(0.8)), 
+    legend.title=element_blank(),
+    legend.position = "bottom",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pl3 = ggplot(motif, aes(x=X,y=loss, color=model))+
+  geom_line(size=1) + geom_line(aes(y=val_loss,color=model), linetype="dotted", size=1)+
+    scale_color_brewer(palette="YlGnBu") +
+  xlab("Epoch") + ylab("Loss") +
+  ggtitle("Motif discovery data") +
+  theme(
+    plot.title = element_text(hjust=0.5, size=rel(1.6)),
+    axis.title.x = element_text(size=rel(1.4)),
+    axis.title.y = element_text(size=rel(1.4), angle=90, vjust=0.5, hjust=0.5),
+    axis.text.x = element_text(colour="grey", size=rel(1.5), angle=90, hjust=.5, vjust=.5, face="plain"),
+    axis.text.y = element_text(colour="grey", size=rel(1.4), angle=0, hjust=.5, vjust=.5, face="plain"),
+    legend.text=element_text(size=rel(0.8)), 
+    legend.title=element_blank(),
+    legend.position = "bottom",
+    panel.background = element_blank(),
+    axis.line = element_line(colour = "grey"),
+    strip.text = element_text(size = 17)
+  )
+
+pdf("motif-batch-size-dynamics.pdf",height=6, width=7)
+p3
+dev.off()
+
+pdf("motif-batch-size-dynamics-loss.pdf",height=6, width=7)
+pl3
+dev.off()
+```
+
 
 # Final plots in the manuscript (JMLR)
 
