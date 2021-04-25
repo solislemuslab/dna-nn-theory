@@ -3524,23 +3524,23 @@ Reading data:
 ```{r}
 spliceadam = read.table("../nlp/splice/baseline_uci_adam256_history.csv",header=TRUE,sep=",")
 splicesgd = read.table("../nlp/splice/baseline_uci_sgd256_history.csv",header=TRUE,sep=",")
-spliceadam$model = "LSTM-AE-Adam"
+spliceadam$model = "LSTM-layer-Adam"
 spliceadam$data = "Splice"
-splicesgd$model = "LSTM-AE-SGD"
+splicesgd$model = "LSTM-layer-SGD"
 splicesgd$data = "Splice"
 
 histoneadam = read.table("../nlp/histone/baseline_histone_adam256_history.csv",header=TRUE,sep=",")
 histonesgd = read.table("../nlp/histone/baseline_histone_sgd256_history.csv",header=TRUE,sep=",")
-histoneadam$model = "LSTM-AE-Adam"
+histoneadam$model = "LSTM-layer-Adam"
 histoneadam$data = "Histone"
-histonesgd$model = "LSTM-AE-SGD"
+histonesgd$model = "LSTM-layer-SGD"
 histonesgd$data = "Histone"
 
 motifadam = read.table("../nlp/motif-discovery/discovery_baseline_adam256__history.csv",header=TRUE,sep=",")
 motifsgd = read.table("../nlp/motif-discovery/discovery_baseline_sgd256__history.csv",header=TRUE,sep=",")
-motifadam$model = "LSTM-AE-Adam"
+motifadam$model = "LSTM-layer-Adam"
 motifadam$data = "Motif-discovery"
-motifsgd$model = "LSTM-AE-SGD"
+motifsgd$model = "LSTM-layer-SGD"
 motifsgd$data = "Motif-discovery"
 
 dat = rbind(spliceadam, splicesgd, histoneadam, histonesgd, motifadam, motifsgd)
