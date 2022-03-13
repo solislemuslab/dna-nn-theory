@@ -1,92 +1,65 @@
-# V1
-All scripts in this section for version 1 can be found in `./v1_scrips` and csv output files in `./v1_csv`.
+# Current version of scripts
 
-## /nlp/CHIP
-- baseline_chip_adam256_history.csv: baseline_chip_adam256_training.png
-- baseline_chip_sgd256_history.csv: baseline chip sgd256 training.png
+## Reproducible scripts
 
-- ae_chip_adam1024_prediction_history.csv: ae chip adam1024 prediction.png
-- ae_chip_adam1024_reconstruction_history.csv: not included in overleaf
-- ae_chip_adam256_prediction_history.csv: ae chip adam256 prediction.png
-- ae_chip_adam256_reconstruction_history.csv: not included in overleaf
-- ae_chip_adam32_prediction_history.csv: ae chip adam32 prediction.png
-- ae_chip_adam32_reconstruction_history.csv: not included in overleaf
+### LSTM-layer
+- uci_baseline_adam256.ipynb
+- histone_lstm_layer_adam.ipynb
+- histone_lstm_layer_sgd.ipynb
+- discovery_baseline.py
 
-- doc2vec_chip_size30_history.csv: doc2vec_chip_prediction.png
+### doc2vec+NN
+- uci_doc2vec_save_embedding.ipynb
+- histone_doc2vec.ipynb
+- discovery_doc2vec.py
 
-## /nlp/UCI
-- baseline_uci_adam256_history.csv: baseline uci adam256 training.png
-- baseline_uci_sgd256_history.csv: baseline uci sgd256 training.png
+### LSTM-AE+NN
+- uci_ae_adam32.ipynb
+- uci_ae_adam256.ipynb
+- histone_ae_adam32.ipynb
+- histone_ae_adam256.ipynb
+- histone_ae_adam1024.ipynb
+- discovery_ae.py
 
-- ae_uci_prediction_history.csv: ae_uci_prediction.png
-- ae_uci_reconstruction_history.csv: not included in overleaf
+## Output files
 
-- doc2vec_uci_size30_history.csv: doc2vec_uci_prediction
-
-- pass
-ae_uci_raw_test.csv
-ae_uci_raw_train.csv
-ae_uci_raw_val.csv
-ae_uci_tsne_test.csv
-ae_uci_tsne_train.csv
-ae_uci_tsne_val.csv
-all these 6: not included in overleaf
-
-- pass
-doc2vec_uci_size30_test.csv
-doc2vec_uci_size30_train.csv
-doc2vec_uci_size30_val.csv
-all these 3: not included in overleaf
+Output files can be found in the following subfolders:
+- `histone`
+- `motif-discovery`
+- `splice`
 
 
-## /nlp/viridae
-- baseline_viridae_adam256_history.csv: baseline viridae adam256 training.png
-- baseline_viridae_sgd256_history.csv: baseline viridae sgd256 training.png
-- baseline_viridae(front)\_sgd256_history.csv: baseline_viridae(front)\_sgd256_training.png
-- baseline_viridae(mdl)\_sgd256_history.csv: baseline_viridae(mdl)\_sgd256_training.png
-- baseline_viridae(rear)\_sgd256_history.csv: baseline_viridae(rear)\_sgd256_training.png
 
-- ae_viridae_prediction_history.csv: ae_viridae_prediction.png
-- ae_viridae_reconstruction_history.csv: not included in overleaf
+# Previous version of scripts (V1)
+All scripts in this section for version 1 can be found in `./v1_scrips`.
 
+### LSTM-layer
+- supervised_chip(256_adam)_save_embeddings.ipynb
+- supervised_chip(256_sgd)_save_embedding.ipynb
+- supervised_UCI_adam256_save_embedding.ipynb
+- supervised_UCI_sgd256_save_embedding.ipynb
+- supervised_viridae_adam256_save_embedding.ipynb
+- supervised_viridae_save_embedding.ipynb
+- supervised_viridae(front)_sgd256_save_embedding.ipynb
+- supervised_viridae(mdl)_sgd256_save_embedding.ipynb
+- supervised_viridae(rear)_sgd256_save_embedding.ipynb
 
-- pass
-doc2vec_viridae_size50_history.csv
-doc2vec_viridae_size100_history.csv
-doc2vec_viridae_size150_history.csv
-doc2vec_viridae_size200_history.csv
-all these 4: doc2vec viridae acc.jpg
+### doc2vec+NN
+- doc2vec_chip_save_embedding.ipynb
+- doc2vec_UCI_save_embedding.ipynb
+- doc2vec_viridae_save_embedding.ipynb
 
-- pass
-doc2vec_viridae_size50_test.csv
-doc2vec_viridae_size50_train.csv
-doc2vec_viridae_size100_test.csv
-doc2vec_viridae_size100_train.csv
-doc2vec_viridae_size150_test.csv
-doc2vec_viridae_size150_train.csv
-doc2vec_viridae_size200_test.csv
-doc2vec_viridae_size200_train.csv
-all these 8: not included in overleaf
+### LSTM-AE+NN
+- ae(1_layer)_chip_adam32_save_embedding.ipynb
+- ae(1_layer)_chip_adam256_save_embedding.ipynb
+- ae(1_layer)_chip_adam1024_save_embedding.ipynb
+- ae(1_layer)_UCI_save_embedding.ipynb
+- ae(1_layer)_viridae_save_embedding.ipynb
 
-- pass
-ae_viridae_raw_test.csv
-ae_viridae_raw_train.csv
-ae_viridae_raw_val.csv
-ae_viridae_tsne_test.csv
-ae_viridae_tsne_train.csv
-ae_viridae_tsne_val.csv
-all these 6: ae_viridae_tsne.png
+# Previous version of scripts (V0)
+- Embedding.ipynb
+- kmer.ipynb
+- lstm_autoencoder.ipynb
+- viridae.ipynb
 
-- pass
-doc2vec_viridae_tsne_size100_test.csv
-doc2vec_viridae_tsne_size100_train.csv
-doc2vec_viridae_tsne_size150_test.csv
-doc2vec_viridae_tsne_size150_train.csv
-doc2vec_viridae_tsne_size200_test.csv
-doc2vec_viridae_tsne_size200_train.csv
-doc2vec_viridae_tsne_size50_test.csv
-doc2vec_viridae_tsne_size50_train.csv
-all these 8: doc2vec viridae tsne.png
-
-# V2
 
