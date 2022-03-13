@@ -14,6 +14,9 @@ This repository contains the scripts for the [Zhang et al, 2021](https://arxiv.o
 }
 ```
 
+Joint first authors with equal contribution (Zhang, Zhaoyi and Cheng, Songyang). Order determined randomly by `scripts/order-authors.jl`.
+
+
 ## Data
 
 We used publicly available data from the following manuscripts:
