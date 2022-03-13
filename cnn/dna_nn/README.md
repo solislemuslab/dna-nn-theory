@@ -1,0 +1,4 @@
+- [dataset.py](https://github.com/solislemuslab/dna-nn-theory/blob/master/cnn/dna_nn/dataset.py): Load the dataset and create `tensorflow.data.Dataset`.
+- [download.py](https://github.com/solislemuslab/dna-nn-theory/blob/master/cnn/dna_nn/download.py): Download the motif and histone dataset from source. The splice data can be download by hand at UCI Machine Learning Repository.
+- [load.py](https://github.com/solislemuslab/dna-nn-theory/blob/master/cnn/dna_nn/load.py): Functions for loading the dataset from files and encoding the sequences.
+- [model.py](https://github.com/solislemuslab/dna-nn-theory/blob/master/cnn/dna_nn/model.py): Functions for creating all the models in the experiment.
