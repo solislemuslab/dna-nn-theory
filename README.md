@@ -3,14 +3,18 @@ Zhaoyi Zhang, Songyang Cheng, Claudia Solis-Lemus
 
 ## Citation
 
-This repository contains the scripts for the [Zhang et al, 2021](https://arxiv.org/abs/2012.05995) manuscript:
+This repository contains the scripts for the [Zhang et al, 2022](https://rdcu.be/cK8hd) manuscript:
 
 ```
-@article{zhang2020towards,
-  title={Towards a robust out-of-the-box neural network model for genomic data},
-  author={Zhang, Zhaoyi and Cheng, Songyang and Solis-Lemus, Claudia},
-  journal={arXiv preprint arXiv:2012.05995},
-  year={2020}
+@article{Zhang_Cheng_Solis-Lemus_2022, 
+title={Towards a robust out-of-the-box neural network model for genomic data}, 
+volume={23}, 
+DOI={10.1186/s12859-022-04660-8},  
+number={1}, 
+journal={BMC Bioinformatics}, 
+author={Zhang, Zhaoyi and Cheng, Songyang and Solis-Lemus, Claudia}, 
+year={2022}, 
+pages={125}
 }
 ```
 
